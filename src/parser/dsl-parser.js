@@ -1,10 +1,21 @@
+const ts = require("typescript/lib/typescriptServices.js");
+require("systemjs/dist/system.js");
+require("systemjs/dist/extras/global.js");
+require("systemjs/dist/extras/amd.js");
+require("systemjs/dist/extras/transform.js");
+require("systemjs/dist/extras/dynamic-import-maps.js");
+require("systemjs/dist/extras/named-exports.js");
+require("systemjs/dist/extras/named-register.js");
+//*/
 //var esprima = require('esprima');
 //var escodegen = require("escodegen");
 //import * as escodegen from 'escodegen';
 import * as esprima from 'esprima';
-import {
+import * as model from "../tree";
+
+const {
   jsonToDslObject
-} from "../tree";
+} = model;
 
 const DEBUG = true;
 
@@ -13,6 +24,42 @@ function debug(msg) {
     console.log(msg);
   }
 }
+
+const System = window.System;
+// Re-export topology-dsl-core
+System.register("topology-dsl-core",[], function (exports_1) {
+  "use strict";
+  exports_1(model);
+  return {
+    setters: [],
+    execute: function () {
+    }
+  };
+});
+/*
+System.register("topology-dsl-core",[], function (exports_1,context_1) {
+  "use strict";
+  var __moduleName = context_1 && context_1.id;
+  function exportStar_1(m) {
+      var exports = {};
+      for (var n in m) {
+          if (n !== "default") exports[n] = m[n];
+      }
+      exports_1(exports);
+  }
+
+  exportStar_1(model);
+  return {
+    setters: [
+        function (moment_1_1) {
+            exportStar_1(model);
+        }
+    ],
+    execute: function () {
+    }
+  };
+});
+// */
 
 export function parseDsl(input,dslModule){
 
@@ -71,7 +118,53 @@ return result;
     console.error(e.name + ': ' + e.message);
   }
 
-  return factoryFn(dslModule);
+  return Promise.resolve(factoryFn(dslModule));
+
+}
+
+const IMPORT_ID = "IMPORT_ID";
+export function parseDslModule(source,dslModule){
+  // https://github.com/Microsoft/TypeScript/wiki/Using-the-Compiler-API
+  // https://jsfiddle.net/k78t436y/
+  // https://unpkg.com/typescript@latest/lib/typescriptServices.js
+  // https://github.com/systemjs/systemjs/blob/master/docs/system-register.md transpileModule
+  // Transpile code to Module
+  let result = ts.transpileModule(
+    source, 
+    { 
+      compilerOptions: { 
+        module: ts.ModuleKind.AMD,
+        moduleResolution: ts.ModuleResolutionKind.Node,
+        esModuleInterop: true 
+      }
+    }
+  );
+
+  debug(result.outputText);
+  // Dynamically register module
+  try {
+    (0, eval)(result.outputText);
+    // Invalidate import cache
+    if(System.has(IMPORT_ID)){
+      System.delete(IMPORT_ID);
+    }
+    // Re-register the module
+    System.registerRegistry[IMPORT_ID] = System.getRegister();
+    debug(System.getRegister());
+  } catch (err) {
+    console.log(err);
+  }
+
+  // Convert exports to map
+  return System.import(IMPORT_ID).then((modules) => {
+    let variables = new Map();
+    for ( let key in modules) {
+      if ( key !== 'default' && !key.startsWith('_')) {
+        variables.set(key,modules[key]);
+      }
+    }
+    return variables;
+  });
 
 }
 
