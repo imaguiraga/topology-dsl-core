@@ -1,12 +1,11 @@
 const ts = require("typescript/lib/typescriptServices.js");
-/*
-import "systemjs/dist/system.js";
-import "systemjs/dist/extras/global.js";
-import "systemjs/dist/extras/amd.js";
-import "systemjs/dist/extras/transform.js";
-import "systemjs/dist/extras/dynamic-import-maps.js";
-import "systemjs/dist/extras/named-exports.js";
-import "systemjs/dist/extras/named-register.js";
+require("systemjs/dist/system.js");
+require("systemjs/dist/extras/global.js");
+require("systemjs/dist/extras/amd.js");
+require("systemjs/dist/extras/transform.js");
+require("systemjs/dist/extras/dynamic-import-maps.js");
+require("systemjs/dist/extras/named-exports.js");
+require("systemjs/dist/extras/named-register.js");
 //*/
 //var esprima = require('esprima');
 //var escodegen = require("escodegen");
@@ -61,8 +60,7 @@ System.register("@imaguiraga/topology-dsl-core",[], function (exports_1,context_
   };
 });
 // */
-//System.registerRegistry["@imaguiraga/topology-dsl-core/src/index.js"] = System.getRegister();
-//System.registerRegistry["@imaguiraga/topology-dsl-core"] = System.getRegister();
+
 
 export function parseDsl(input,dslModule){
 
@@ -145,22 +143,22 @@ export function parseDsl2(source,dslModule){
 
   console.log(result.outputText);
   // Dynamically register a module id
+  const importName = "mytest1.js";
   try {
     (0, eval)(result.outputText);
-    console.log(System);
-    System.registerRegistry["mytest1.js"] = System.getRegister();
+    // Invalidate import cache
+    if(System.has(importName)){
+      System.delete(importName);
+    }
+    System.registerRegistry[importName] = System.getRegister();
     console.log(System.getRegister());
   } catch (err) {
     console.log(err);
   }
 
   // Convert exports to map
-  return System.import("mytest1.js").then((modules) => {
+  return System.import(importName).then((modules) => {
     let variables = new Map();
-    /*
-    for ( let key of Object.keys(modules)) {
-      variables.set(key,modules[key]);
-    }//*/
     for ( let key in modules) {
       if ( key !== 'default' && !key.startsWith('_')) {
         variables.set(key,modules[key]);
@@ -169,7 +167,6 @@ export function parseDsl2(source,dslModule){
     return variables;
   });
 
-   //*/
 }
 
 export function resolveImports(input){
