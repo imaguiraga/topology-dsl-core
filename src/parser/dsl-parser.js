@@ -27,7 +27,7 @@ function debug(msg) {
 
 const System = window.System;
 // Re-export topology-dsl-core
-System.register("@imaguiraga/topology-dsl-core",[], function (exports_1) {
+System.register("topology-dsl-core",[], function (exports_1) {
   "use strict";
   exports_1(model);
   return {
@@ -37,7 +37,7 @@ System.register("@imaguiraga/topology-dsl-core",[], function (exports_1) {
   };
 });
 /*
-System.register("@imaguiraga/topology-dsl-core",[], function (exports_1,context_1) {
+System.register("topology-dsl-core",[], function (exports_1,context_1) {
   "use strict";
   var __moduleName = context_1 && context_1.id;
   function exportStar_1(m) {
@@ -60,7 +60,6 @@ System.register("@imaguiraga/topology-dsl-core",[], function (exports_1,context_
   };
 });
 // */
-
 
 export function parseDsl(input,dslModule){
 
@@ -123,13 +122,13 @@ return result;
 
 }
 
-export function parseDsl2(source,dslModule){
-
+const IMPORT_ID = "IMPORT_ID";
+export function parseDslModule(source,dslModule){
   // https://github.com/Microsoft/TypeScript/wiki/Using-the-Compiler-API
   // https://jsfiddle.net/k78t436y/
   // https://unpkg.com/typescript@latest/lib/typescriptServices.js
   // https://github.com/systemjs/systemjs/blob/master/docs/system-register.md transpileModule
-  // Transpile code
+  // Transpile code to Module
   let result = ts.transpileModule(
     source, 
     { 
@@ -141,23 +140,23 @@ export function parseDsl2(source,dslModule){
     }
   );
 
-  console.log(result.outputText);
-  // Dynamically register a module id
-  const importName = "mytest1.js";
+  debug(result.outputText);
+  // Dynamically register module
   try {
     (0, eval)(result.outputText);
     // Invalidate import cache
-    if(System.has(importName)){
-      System.delete(importName);
+    if(System.has(IMPORT_ID)){
+      System.delete(IMPORT_ID);
     }
-    System.registerRegistry[importName] = System.getRegister();
-    console.log(System.getRegister());
+    // Re-register the module
+    System.registerRegistry[IMPORT_ID] = System.getRegister();
+    debug(System.getRegister());
   } catch (err) {
     console.log(err);
   }
 
   // Convert exports to map
-  return System.import(importName).then((modules) => {
+  return System.import(IMPORT_ID).then((modules) => {
     let variables = new Map();
     for ( let key in modules) {
       if ( key !== 'default' && !key.startsWith('_')) {
