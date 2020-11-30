@@ -30,25 +30,26 @@ const System = window.System;
 var systemJSPrototype = System.constructor.prototype;
 // Hookable transform function!
 systemJSPrototype.transform = function (_id, source) {
-  // If code is a Sytem or AMD module
-  if( source.startsWith('System.register') || source.startsWith('define')) {
-    return source;
-  } else {
-    // If code is not a Sytem or AMD module transpile it
-    let result = ts.transpileModule(
-      source, 
-      { 
-        compilerOptions: { 
-          module: ts.ModuleKind.AMD,
-          moduleResolution: ts.ModuleResolutionKind.Node,
-          esModuleInterop: true 
+  if( _id.endsWith('.js') || _id.endsWith('.jsx') || _id.endsWith('.ts') || _id.endsWith('.tsx')) {
+    // If code is a Sytem or AMD module
+    if( !source.startsWith('System.register') && !source.startsWith('define')) {
+      // If code is not a Sytem or AMD module transpile it
+      let result = ts.transpileModule(
+        source, 
+        { 
+          compilerOptions: { 
+            module: ts.ModuleKind.AMD,
+            moduleResolution: ts.ModuleResolutionKind.Node,
+            esModuleInterop: true 
+          }
         }
-      }
-    );
-    debug('transpiled code:\n'+result.outputText); 
-    return result.outputText;
-  }
+      );
+      debug('transpiled code:\n'+result.outputText); 
+      return result.outputText;
+    }
+  } 
 
+  return source;
 };
 
 
