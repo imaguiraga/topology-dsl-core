@@ -30,7 +30,7 @@ const System = window.System;
 var systemJSPrototype = System.constructor.prototype;
 // Hookable transform function!
 systemJSPrototype.transform = function (_id, source) {
-  if( _id.endsWith('.js') || _id.endsWith('.jsx') || _id.endsWith('.ts') || _id.endsWith('.tsx')) {
+  if(isScript(_id)) {
     // If code is a Sytem or AMD module
     if( !source.startsWith('System.register') && !source.startsWith('define')) {
       // If code is not a Sytem or AMD module transpile it
@@ -124,9 +124,35 @@ return result;
   return Promise.resolve(factoryFn(dslModule));
 
 }
+
+function isScript(source) {
+  return (source.endsWith('.js') || source.endsWith('.jsx') || source.endsWith('.ts') || source.endsWith('.tsx'));
+}
 // To resolve relative urls
 const IMPORT_ID = location.href+"IMPORT.js";
-export function parseDslModule(source,dslModule){
+export function parseDslModule(source,dslModule) {
+  let importPromise = null;
+  if(isScript(source)) {
+    importPromise = importURL( source,dslModule);
+
+  } else {
+    importPromise = importSource( source,dslModule);
+  }
+
+  // Convert exports to map
+  return importPromise.then((modules) => {
+    let variables = new Map();
+    for ( let key in modules) {
+      if ( key !== 'default' && !key.startsWith('_')) {
+        variables.set(key,modules[key]);
+      }
+    }
+    return variables;
+  });
+
+}
+
+function importSource(source) {
   // https://github.com/Microsoft/TypeScript/wiki/Using-the-Compiler-API
   // https://jsfiddle.net/k78t436y/
   // https://unpkg.com/typescript@latest/lib/typescriptServices.js
@@ -143,7 +169,7 @@ export function parseDslModule(source,dslModule){
     }
   );
 
-  debug(result.outputText);
+  debug('importSource -> ' + result.outputText);
   // Dynamically register module
   try {
     (0, eval)(result.outputText);
@@ -157,19 +183,14 @@ export function parseDslModule(source,dslModule){
   } catch (err) {
     console.log(err);
   }
-
-  // Convert exports to map
-  return System.import(IMPORT_ID).then((modules) => {
-    let variables = new Map();
-    for ( let key in modules) {
-      if ( key !== 'default' && !key.startsWith('_')) {
-        variables.set(key,modules[key]);
-      }
-    }
-    return variables;
-  });
-
+  return System.import(IMPORT_ID);
 }
+
+function importURL(url) {
+  debug('importURL -> ' + url);
+  return System.import(url);
+}
+
 
 export function resolveImports(input){
   const result = new Promise( (resolveFn,rejectFn) => {
