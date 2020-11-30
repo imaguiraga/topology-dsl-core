@@ -140,15 +140,24 @@ export function parseDslModule(source,dslModule) {
   }
 
   // Convert exports to map
-  return importPromise.then((modules) => {
-    let variables = new Map();
-    for ( let key in modules) {
-      if ( key !== 'default' && !key.startsWith('_')) {
-        variables.set(key,modules[key]);
+  if(importPromise != null) {
+    return importPromise.then((modules) => {
+      let variables = new Map();
+      for ( let key in modules) {
+        if ( key !== 'default' && !key.startsWith('_')) {
+          variables.set(key,modules[key]);
+        }
       }
-    }
-    return variables;
-  });
+      return variables;
+    }).catch((err) => {
+      console.log(err);
+      let variables = new Map();
+      variables.set('ERROR',null);
+      return variables;
+    });
+  } else {
+    return Promise.resolve(new Map());
+  }
 
 }
 
@@ -158,20 +167,21 @@ function importSource(source) {
   // https://unpkg.com/typescript@latest/lib/typescriptServices.js
   // https://github.com/systemjs/systemjs/blob/master/docs/system-register.md transpileModule
   // Transpile code to Module
-  let result = ts.transpileModule(
-    source, 
-    { 
-      compilerOptions: { 
-        module: ts.ModuleKind.AMD,
-        moduleResolution: ts.ModuleResolutionKind.Node,
-        esModuleInterop: true 
-      }
-    }
-  );
-
-  debug('importSource -> ' + result.outputText);
-  // Dynamically register module
   try {
+    let result = ts.transpileModule(
+      source, 
+      { 
+        compilerOptions: { 
+          module: ts.ModuleKind.AMD,
+          moduleResolution: ts.ModuleResolutionKind.Node,
+          esModuleInterop: true 
+        }
+      }
+    );
+
+    debug('importSource -> ' + result.outputText);
+    // Dynamically register module
+
     (0, eval)(result.outputText);
     // Invalidate import cache
     if(System.has(IMPORT_ID)){
@@ -182,6 +192,7 @@ function importSource(source) {
     debug(System.getRegister());
   } catch (err) {
     console.log(err);
+    return null;
   }
   return System.import(IMPORT_ID);
 }
