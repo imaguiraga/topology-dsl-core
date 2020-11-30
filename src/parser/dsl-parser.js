@@ -11,6 +11,7 @@ require("systemjs/dist/extras/named-register.js");
 //var escodegen = require("escodegen");
 //import * as escodegen from 'escodegen';
 import * as esprima from 'esprima';
+import { getSupportedCodeFixes } from 'typescript';
 import * as model from "../tree";
 
 const {
@@ -26,6 +27,31 @@ function debug(msg) {
 }
 
 const System = window.System;
+var systemJSPrototype = System.constructor.prototype;
+// Hookable transform function!
+systemJSPrototype.transform = function (_id, source) {
+  // If code is a Sytem or AMD module
+  if( source.startsWith('System.register') || source.startsWith('define')) {
+    return source;
+  } else {
+    // If code is not a Sytem or AMD module transpile it
+    let result = ts.transpileModule(
+      source, 
+      { 
+        compilerOptions: { 
+          module: ts.ModuleKind.AMD,
+          moduleResolution: ts.ModuleResolutionKind.Node,
+          esModuleInterop: true 
+        }
+      }
+    );
+    debug('transpiled code:\n'+result.outputText); 
+    return result.outputText;
+  }
+
+};
+
+
 // Re-export topology-dsl-core
 System.register("topology-dsl-core",[], function (exports_1) {
   "use strict";
@@ -36,30 +62,6 @@ System.register("topology-dsl-core",[], function (exports_1) {
     }
   };
 });
-/*
-System.register("topology-dsl-core",[], function (exports_1,context_1) {
-  "use strict";
-  var __moduleName = context_1 && context_1.id;
-  function exportStar_1(m) {
-      var exports = {};
-      for (var n in m) {
-          if (n !== "default") exports[n] = m[n];
-      }
-      exports_1(exports);
-  }
-
-  exportStar_1(model);
-  return {
-    setters: [
-        function (moment_1_1) {
-            exportStar_1(model);
-        }
-    ],
-    execute: function () {
-    }
-  };
-});
-// */
 
 export function parseDsl(input,dslModule){
 
@@ -121,8 +123,8 @@ return result;
   return Promise.resolve(factoryFn(dslModule));
 
 }
-
-const IMPORT_ID = "IMPORT_ID";
+// To resolve relative urls
+const IMPORT_ID = location.href+"IMPORT.js";
 export function parseDslModule(source,dslModule){
   // https://github.com/Microsoft/TypeScript/wiki/Using-the-Compiler-API
   // https://jsfiddle.net/k78t436y/
