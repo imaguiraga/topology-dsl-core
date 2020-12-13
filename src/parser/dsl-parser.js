@@ -11,6 +11,7 @@ require("systemjs/dist/extras/named-register.js");
 //var escodegen = require("escodegen");
 //import * as escodegen from 'escodegen';
 import * as esprima from 'esprima';
+import { getSupportedCodeFixes } from 'typescript';
 import * as model from "../tree";
 
 const {
@@ -20,14 +21,40 @@ const {
 const DEBUG = true;
 
 function debug(msg) {
-  if(DEBUG) {
+  if (DEBUG) {
     console.log(msg);
   }
 }
 
 const System = window.System;
+var systemJSPrototype = System.constructor.prototype;
+// Hookable transform function!
+systemJSPrototype.transform = function (_id, source) {
+  if (isScript(_id)) {
+    // If code is a Sytem or AMD module
+    if (!source.startsWith('System.register') && !source.startsWith('define')) {
+      // If code is not a Sytem or AMD module transpile it
+      let result = ts.transpileModule(
+        source,
+        {
+          compilerOptions: {
+            module: ts.ModuleKind.AMD,
+            moduleResolution: ts.ModuleResolutionKind.Node,
+            esModuleInterop: true
+          }
+        }
+      );
+      debug('transpiled code:\n' + result.outputText);
+      return result.outputText;
+    }
+  }
+
+  return source;
+};
+
+
 // Re-export topology-dsl-core
-System.register("topology-dsl-core",[], function (exports_1) {
+System.register("topology-dsl-core", [], function (exports_1) {
   "use strict";
   exports_1(model);
   return {
@@ -36,61 +63,37 @@ System.register("topology-dsl-core",[], function (exports_1) {
     }
   };
 });
-/*
-System.register("topology-dsl-core",[], function (exports_1,context_1) {
-  "use strict";
-  var __moduleName = context_1 && context_1.id;
-  function exportStar_1(m) {
-      var exports = {};
-      for (var n in m) {
-          if (n !== "default") exports[n] = m[n];
-      }
-      exports_1(exports);
-  }
 
-  exportStar_1(model);
-  return {
-    setters: [
-        function (moment_1_1) {
-            exportStar_1(model);
-        }
-    ],
-    execute: function () {
-    }
-  };
-});
-// */
-
-export function parseDsl(input,dslModule){
+export function parseDsl(input, dslModule) {
 
   // Get module ids
-  let MODULE_IDS = Object.keys(dslModule); 
+  let MODULE_IDS = Object.keys(dslModule);
   // Parse text
   // eslint-disable-next-line
-  let factoryFn = new Function("dslModule","return new Map();");
+  let factoryFn = new Function("dslModule", "return new Map();");
   let variableIds = [];
   let moduleIds = [];
- 
-  let callbackFn = function (elt){
+
+  let callbackFn = function (elt) {
     // Extract Identifiers
-    if(elt.type === 'VariableDeclaration'){
+    if (elt.type === 'VariableDeclaration') {
       let decl = elt.declarations[0];
       let name = decl.id.name;
       let value = name;
 
-      if(decl.init.type === "ArrowFunctionExpression" || decl.init.type === "FunctionExpression") {
-        value = name+"()";
-      } 
+      if (decl.init.type === "ArrowFunctionExpression" || decl.init.type === "FunctionExpression") {
+        value = name + "()";
+      }
       variableIds.push(`result.set('${name}',${value});`);
 
-    } else if (elt.type === 'CallExpression'){
+    } else if (elt.type === 'CallExpression') {
       let name = elt.callee.name;
       moduleIds.push(name);
     }
   };
 
   try {
-    let tree = esprima.parseScript(input,{},callbackFn);
+    let tree = esprima.parseScript(input, {}, callbackFn);
 
     // Extract call ids
     // Keep only ids in the default  
@@ -100,7 +103,7 @@ export function parseDsl(input,dslModule){
     });
 
     let text =
-`const {
+      `const {
 ${moduleIds.join(",\n")}
 } = dslModule;
 
@@ -110,11 +113,11 @@ let result = new Map();
 ${variableIds.join("\n")}
 return result;
 `;
-  debug(text);
+    debug(text);
     // eslint-disable-next-line
-    factoryFn = new Function("dslModule",text);
+    factoryFn = new Function("dslModule", text);
 
-  } catch(e) {
+  } catch (e) {
     console.error(e.name + ': ' + e.message);
   }
 
@@ -122,30 +125,70 @@ return result;
 
 }
 
-const IMPORT_ID = "IMPORT_ID";
-export function parseDslModule(source,dslModule){
+function isScript(source) {
+  return (source.endsWith('.js') ||
+    source.endsWith('.jsx') ||
+    source.endsWith('.ts') ||
+    source.endsWith('.tsx')
+  );
+}
+// To resolve relative urls
+const IMPORT_ID = location.href + "IMPORT.js";
+export function parseDslModule(source, dslModule) {
+  let importPromise = null;
+  if (isScript(source)) {
+    importPromise = importURL(source, dslModule);
+
+  } else {
+    importPromise = importSource(source, dslModule);
+  }
+
+  // Convert exports to map
+  if (importPromise != null) {
+    return importPromise.then((modules) => {
+      let variables = new Map();
+      for (let key in modules) {
+        if (key !== 'default' && !key.startsWith('_')) {
+          variables.set(key, modules[key]);
+        }
+      }
+      return variables;
+    }).catch((err) => {
+      console.log(err);
+      let variables = new Map();
+      variables.set('ERROR', null);
+      return variables;
+    });
+  } else {
+    return Promise.resolve(new Map());
+  }
+
+}
+
+function importSource(source) {
   // https://github.com/Microsoft/TypeScript/wiki/Using-the-Compiler-API
   // https://jsfiddle.net/k78t436y/
   // https://unpkg.com/typescript@latest/lib/typescriptServices.js
   // https://github.com/systemjs/systemjs/blob/master/docs/system-register.md transpileModule
   // Transpile code to Module
-  let result = ts.transpileModule(
-    source, 
-    { 
-      compilerOptions: { 
-        module: ts.ModuleKind.AMD,
-        moduleResolution: ts.ModuleResolutionKind.Node,
-        esModuleInterop: true 
-      }
-    }
-  );
-
-  debug(result.outputText);
-  // Dynamically register module
   try {
+    let result = ts.transpileModule(
+      source,
+      {
+        compilerOptions: {
+          module: ts.ModuleKind.AMD,
+          moduleResolution: ts.ModuleResolutionKind.Node,
+          esModuleInterop: true
+        }
+      }
+    );
+
+    debug('importSource -> ' + result.outputText);
+    // Dynamically register module
+
     (0, eval)(result.outputText);
     // Invalidate import cache
-    if(System.has(IMPORT_ID)){
+    if (System.has(IMPORT_ID)) {
       System.delete(IMPORT_ID);
     }
     // Re-register the module
@@ -153,39 +196,38 @@ export function parseDslModule(source,dslModule){
     debug(System.getRegister());
   } catch (err) {
     console.log(err);
+    return null;
   }
-
-  // Convert exports to map
-  return System.import(IMPORT_ID).then((modules) => {
-    let variables = new Map();
-    for ( let key in modules) {
-      if ( key !== 'default' && !key.startsWith('_')) {
-        variables.set(key,modules[key]);
-      }
-    }
-    return variables;
-  });
-
+  return System.import(IMPORT_ID);
 }
 
-export function resolveImports(input){
-  const result = new Promise( (resolveFn,rejectFn) => {
+function importURL(url) {
+  debug('importURL -> ' + url);
+  if (System.has(url)) {
+    System.delete(url);
+  }
+  return System.import(url);
+}
+
+
+export function resolveImports(input) {
+  const result = new Promise((resolveFn, rejectFn) => {
 
     const toload = new Map(); // Map of external imports to load with fetch
     // AST callback function to extract imports
-    let callbackFn = function (elt){
+    let callbackFn = function (elt) {
       // Extract Identifiers
-      if(elt.type === "CallExpression" && elt.callee.name === "load") {
+      if (elt.type === "CallExpression" && elt.callee.name === "load") {
         // Extract parameters from function name "load" 
         // Add files to load async
         let key = elt.arguments[0].value;
-        toload.set(key,null);
+        toload.set(key, null);
       }
     };
 
     try {
-      let tree = esprima.parseScript(input,{},callbackFn);
-    } catch(e) {
+      let tree = esprima.parseScript(input, {}, callbackFn);
+    } catch (e) {
       console.error(e.name + ': ' + e.message);
       rejectFn(e);
     }
@@ -196,22 +238,22 @@ export function resolveImports(input){
       loadpromises.push(
         fetch(key)
           .then(response => response.json())
-          .then( function(data) { 
-            console.log("loaded -> "+key);
-            map.set(key,jsonToDslObject(data));
+          .then(function (data) {
+            console.log("loaded -> " + key);
+            map.set(key, jsonToDslObject(data));
           })
       );
     });
     // Wait on all promises to load
     Promise.allSettled(loadpromises).then((iterable) => {
-      console.log("loaded imports -> "+iterable);
+      console.log("loaded imports -> " + iterable);
       // Delegate to main promise (map of resolved imports)
       resolveFn(toload);
     })
-    .catch((error) => {
-      console.error('Error:', error);
-      rejectFn(error);
-    });
+      .catch((error) => {
+        console.error('Error:', error);
+        rejectFn(error);
+      });
 
   });
 

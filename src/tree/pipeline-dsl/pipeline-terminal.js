@@ -6,7 +6,7 @@ export const PIPELINE_RESOURCE_TYPE = "pipeline";
 /**
  * Class StepPipelineElt.
  */
-export class StepPipelineElt extends TerminalResource{
+export class StepPipelineElt extends TerminalResource {
 
   /**
    * Create a StepPipelineElt.
@@ -14,8 +14,8 @@ export class StepPipelineElt extends TerminalResource{
    * @param {object} ctx - The ctx value.
    * @param {string} tagName - The tagName value.
    */
-  constructor(elts,ctx) {
-    super(elts,ctx,"terminal","step",PIPELINE_RESOURCE_TYPE);
+  constructor(elts, ctx) {
+    super(elts, ctx, "terminal", "step", PIPELINE_RESOURCE_TYPE);
   }
 
 }
@@ -23,7 +23,7 @@ export class StepPipelineElt extends TerminalResource{
 /**
  * Class DataPipelineElt.
  */
-export class DataPipelineElt extends TerminalResource{
+export class DataPipelineElt extends TerminalResource {
 
   /**
    * Create a DataPipelineElt.
@@ -31,8 +31,8 @@ export class DataPipelineElt extends TerminalResource{
    * @param {object} ctx - The ctx value.
    * @param {string} tagName - The tagName value.
    */
-  constructor(elts,ctx) {
-    super(elts,ctx,"terminal","data",PIPELINE_RESOURCE_TYPE);
+  constructor(elts, ctx) {
+    super(elts, ctx, "terminal", "data", PIPELINE_RESOURCE_TYPE);
   }
 
 }
