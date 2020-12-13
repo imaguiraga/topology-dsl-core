@@ -1,16 +1,16 @@
 /**
  * idGenFn function.
  */
-function* idGenFn(prefix,index) {
+function* idGenFn(prefix, index) {
   while (index >= 0) {
     let reset = yield index++;
-    if(reset){
-        index = 0;
+    if (reset) {
+      index = 0;
     }
   }
 }
 
-export const NODEIDGENFN = idGenFn("node.",0);
+export const NODEIDGENFN = idGenFn("node.", 0);
 
 /**
  * Class TerminalResource.
@@ -23,7 +23,7 @@ export class TerminalResource {
    * @param {string} tagName - The tagName value.
    * @param {string} provider - The resource provider value.
    */
-  constructor(elts,resourceType,tagName,provider) {
+  constructor(elts, resourceType, tagName, provider) {
     let self = this;
     // Nex Id Generator
     self.idGenIt = NODEIDGENFN;
@@ -36,7 +36,7 @@ export class TerminalResource {
     self.id = self.subType + "." + this.idGenIt.next().value;
     self.provider = provider;
     self.compound = false;
-    
+
     self._start = null;
     self._finish = null;
     self.data = new Map();
@@ -46,15 +46,15 @@ export class TerminalResource {
 
     self.elts = [];
     // Support for dataflow with input and output bindings
-    self.inputElts = []; 
+    self.inputElts = [];
     self.outputElts = [];
 
-    let r = self.resolveElt(elts); 
-    if( r !== null) {
+    let r = self.resolveElt(elts);
+    if (r !== null) {
       // only one elt can be added
       self.elts.push(r);
     }
-    
+
   }
 
   /**
@@ -64,28 +64,28 @@ export class TerminalResource {
    */
   preorder(callbackFn, i = -1, arr = [], thisArg = undefined) {
     let self = this;
-    callbackFn(self,i,arr,thisArg);
-    self.forEach((v,n,a) => {
-      if(v.preorder){
-        v.preorder(callbackFn,n,a,self);
+    callbackFn(self, i, arr, thisArg);
+    self.forEach((v, n, a) => {
+      if (v.preorder) {
+        v.preorder(callbackFn, n, a, self);
       }
-    },self);
+    }, self);
 
   }
 
-   /**
-   * Performs postorder traversal.
-   * @param {(value: T, index: number, array: T[], thisArg: any)) => void} callbackFn  A function that accepts up to three arguments. forEach calls the callbackfn function one time for each element in the array.
-   * @param {Object} thisArg  An object to which the this keyword can refer in the callbackfn function. If thisArg is omitted, undefined is used as the this value.
-   */
-  postorder(callbackFn, i = -1, arr = [], thisArg = undefined) { 
+  /**
+  * Performs postorder traversal.
+  * @param {(value: T, index: number, array: T[], thisArg: any)) => void} callbackFn  A function that accepts up to three arguments. forEach calls the callbackfn function one time for each element in the array.
+  * @param {Object} thisArg  An object to which the this keyword can refer in the callbackfn function. If thisArg is omitted, undefined is used as the this value.
+  */
+  postorder(callbackFn, i = -1, arr = [], thisArg = undefined) {
     let self = this;
-    self.forEach((v,n,a) => {
-      if(v.postorder){
-        v.postorder(callbackFn,n,a,self);
+    self.forEach((v, n, a) => {
+      if (v.postorder) {
+        v.postorder(callbackFn, n, a, self);
       }
-    },self);
-    callbackFn(self,i,arr,thisArg);
+    }, self);
+    callbackFn(self, i, arr, thisArg);
   }
 
   /**
@@ -93,8 +93,8 @@ export class TerminalResource {
    * @param {(value: T, index: number, array: T[]) => void} callbackFn  A function that accepts up to three arguments. forEach calls the callbackfn function one time for each element in the array.
    * @param {Object} thisArg  An object to which the this keyword can refer in the callbackfn function. If thisArg is omitted, undefined is used as the this value.
    */
-  forEach(callbackFn, thisArg){
-    this.elts.forEach(callbackFn,thisArg);
+  forEach(callbackFn, thisArg) {
+    this.elts.forEach(callbackFn, thisArg);
   }
 
   /**
@@ -103,8 +103,8 @@ export class TerminalResource {
    * @param {Object} thisArg An object to which the this keyword can refer in the callbackfn function. If thisArg is omitted, undefined is used as the this value.
    * @returns {U[]}
    */
-  map(callbackFn, thisArg){
-    return this.elts.map(callbackFn,thisArg);
+  map(callbackFn, thisArg) {
+    return this.elts.map(callbackFn, thisArg);
   }
 
   /**
@@ -115,12 +115,12 @@ export class TerminalResource {
    */
   filter(predicateFn, thisArg) {
     // Filter children
-    return this.elts.filter(predicateFn,thisArg);
+    return this.elts.filter(predicateFn, thisArg);
 
   }
 
-  get start(){
-    if(this._start == null){
+  get start() {
+    if (this._start == null) {
       return {
         resourceType: this.resourceType,
         subType: this.subType,
@@ -135,12 +135,12 @@ export class TerminalResource {
     }
   }
 
-  set start(val){
+  set start(val) {
     this._start = val;
   }
 
-  get finish(){
-    if(this._finish == null){
+  get finish() {
+    if (this._finish == null) {
       return {
         resourceType: this.resourceType,
         subType: this.subType,
@@ -155,11 +155,11 @@ export class TerminalResource {
     }
   }
 
-  set finish(val){
+  set finish(val) {
     this._finish = val;
   }
-  
-  isTerminal(){
+
+  isTerminal() {
     return true;
   }
 
@@ -167,26 +167,26 @@ export class TerminalResource {
     return (this.resourceType === "group");
   }
 
-  resolveElt(elt){
+  resolveElt(elt) {
     // Only accept primitive types as Terminal Element 
     let result = null;
-    if( typeof elt !== "undefined") {
+    if (typeof elt !== "undefined") {
       try {
         if (typeof elt === "function") {
           result = elt.call();
-        } 
+        }
 
-        if(typeof result === "object") {
+        if (typeof result === "object") {
           // Allow complex element as terminal
           result = elt;
 
-        } else {   
+        } else {
           // primitive
           result = elt.toString();
         }
 
-      } catch(err){
-        console.error(err.message + " - " +err);
+      } catch (err) {
+        console.error(err.message + " - " + err);
       }
     }
     return result;
@@ -197,7 +197,7 @@ export class TerminalResource {
       return elt.call();
     } else if (typeof elt !== "object") {
       // very likely a primitive type
-      return new TerminalResource(elt,"terminal","resource",this.provider);
+      return new TerminalResource(elt, "terminal", "resource", this.provider);
     }
     // default to object
     return elt;
@@ -207,27 +207,27 @@ export class TerminalResource {
     return this.id === elt.id;
   }
 
-  accept(visitor,filterFn){
-    return visitor.visit(this,filterFn);
+  accept(visitor, filterFn) {
+    return visitor.visit(this, filterFn);
   }
 
-  _add_(elt) {  
-    let r = this.resolveElt(elt); 
-    if( r !== null) {
+  _add_(elt) {
+    let r = this.resolveElt(elt);
+    if (r !== null) {
       // only one elt can be added
-      if(this.elts.length > 0){
-        this.elts.splice(0,this.elts.length);
+      if (this.elts.length > 0) {
+        this.elts.splice(0, this.elts.length);
       }
       this.elts.push(r);
     }
-    
+
     return this;
   }
 
   _require_(elt) {
     let e = this.toElt(elt);
     // Add self to group elt
-    if(e.isGroup()) {
+    if (e.isGroup()) {
       e._add_(this);
     } else {
       this._add_(elt);
@@ -236,7 +236,7 @@ export class TerminalResource {
   }
 
   _subType_(value) {
-    if(value) {
+    if (value) {
       this.subType = value;
       // Replace prefix with subType
       let tmp = this.id.split("\.");
@@ -246,79 +246,79 @@ export class TerminalResource {
     return this;
   }
 
-  _title_(value){
+  _title_(value) {
     this.title = value;
     return this;
   }
 
-  _name_(value){
+  _name_(value) {
     this.name = value;
     return this;
   }
 
-  _id_(value){
+  _id_(value) {
     this.id = value;
     return this;
   }
 
-  _set_(key,value) {
-    this.data.set(key,value);
+  _set_(key, value) {
+    this.data.set(key, value);
     return this;
   }
 
-  _get_(key){
+  _get_(key) {
     return this.data.get(key);
   }
 
-  _link_(value){
+  _link_(value) {
     this.link = value;
     return this;
   }
 
   // Add a reference 
-  _ref_(elt){
+  _ref_(elt) {
     return this._add_(elt);
   }
 
   // Inbound bindings
-  _in_(...elts){
+  _in_(...elts) {
     let self = this;
-    if(Array.isArray(elts)){
+    if (Array.isArray(elts)) {
       elts.forEach((e) => {
         let r = self.toElt(e);
-        if( r != null) {
+        if (r != null) {
           self.inputElts.push(r);
         }
       });
 
     } else {
       let r = self.toElt(elts);
-      if( r != null) {
+      if (r != null) {
         self.inputElts.push(r);
       }
     }
-    
+
     return this;
   }
 
   // Outbound bindings
-  _out_(...elts){
+  _out_(...elts) {
     let self = this;
-    if(Array.isArray(elts)){
+    if (Array.isArray(elts)) {
       elts.forEach((e) => {
         let r = self.toElt(e);
-        if( r != null) {
+        if (r != null) {
           self.outputElts.push(r);
         }
       });
 
     } else {
       let r = self.toElt(elts);
-      if( r != null) {
+      if (r != null) {
         self.outputElts.push(r);
       }
     }
-    
+
     return this;
   }
 
@@ -344,23 +344,23 @@ export class CompositeResource extends TerminalResource {
    * @param {string} tagName - The tagName value.
    * @param {string} provider - The resource provider value.
    */
-  constructor(elts,resourceType,tagName,provider) {
-    super(elts,resourceType,tagName,provider);
+  constructor(elts, resourceType, tagName, provider) {
+    super(elts, resourceType, tagName, provider);
     let self = this;
     self.elts = [];
     self.title = null;
-    self.start = new TerminalResource("start","terminal","mark",provider);
-    self.finish = new TerminalResource("finish","terminal","mark",provider);
+    self.start = new TerminalResource("start", "terminal", "mark", provider);
+    self.finish = new TerminalResource("finish", "terminal", "mark", provider);
     self.compound = true;
 
-    if(Array.isArray(elts)) {
+    if (Array.isArray(elts)) {
       self.elts = elts.map(
-          (elt) => { return self.resolveElt(elt); }
-        ).filter( e => { return e != null; } );
+        (elt) => { return self.resolveElt(elt); }
+      ).filter(e => { return e != null; });
 
     } else {
       let r = self.resolveElt(elts);
-      if( r != null) {
+      if (r != null) {
         self.elts.push(r);
       }
     }
@@ -370,11 +370,11 @@ export class CompositeResource extends TerminalResource {
     }
   }
 
-  isTerminal(){
+  isTerminal() {
     return false;
   }
-  
-  resolveElt(elt){
+
+  resolveElt(elt) {
     return this.toElt(elt);
   }
 
@@ -382,41 +382,41 @@ export class CompositeResource extends TerminalResource {
     return this.elts.filter(e => e.id === elt.id).length > 0;
   }
 
-  _add_(...elts){
+  _add_(...elts) {
     let self = this;
-    if(Array.isArray(elts)){
+    if (Array.isArray(elts)) {
       elts.forEach((e) => {
         let r = self.resolveElt(e);
-        if( r != null) {
+        if (r != null) {
           self.elts.push(r);
         }
       });
 
     } else {
       let r = self.resolveElt(elts);
-      if( r != null) {
+      if (r != null) {
         self.elts.push(r);
       }
     }
-    
+
     return this;
   }
 
-    // Add a reference if it doesn't exist
-  _ref_(...elts){
+  // Add a reference if it doesn't exist
+  _ref_(...elts) {
     let self = this;
-    if(Array.isArray(elts)){
+    if (Array.isArray(elts)) {
       elts.forEach((e) => {
-        if(!self.foundElt(e)) {
+        if (!self.foundElt(e)) {
           self._add_(e);
         }
       });
 
-    } else if(!self.foundElt(elts)) {
+    } else if (!self.foundElt(elts)) {
       self._add_(elts);
     }
-    
+
     return this;
   }
- 
+
 }

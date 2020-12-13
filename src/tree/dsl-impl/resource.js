@@ -14,8 +14,8 @@ export class FanOutFanInElt extends CompositeResource {
    * Create a FanOutFanInElt.
    * @param {object} elts - The elts value.
    */
-  constructor(elts)  {
-    super(elts,"fanOut_fanIn",DEFAULT_TAG,"default");
+  constructor(elts) {
+    super(elts, "fanOut_fanIn", DEFAULT_TAG, "default");
   }
 
 }
@@ -29,8 +29,8 @@ export class FanInElt extends CompositeResource {
    * Create a FanInElt.
    * @param {object} elts - The elts value.
    */
-  constructor(elts)  {
-    super(elts,"fanIn",DEFAULT_TAG,"default");
+  constructor(elts) {
+    super(elts, "fanIn", DEFAULT_TAG, "default");
   }
 
 
@@ -45,8 +45,8 @@ export class FanOutElt extends CompositeResource {
    * Create a FanOutElt.
    * @param {object} elts - The elts value.
    */
-  constructor(elts)  {
-    super(elts,"fanOut",DEFAULT_TAG,"default");
+  constructor(elts) {
+    super(elts, "fanOut", DEFAULT_TAG, "default");
   }
 
 }
@@ -55,21 +55,21 @@ export class FanOutElt extends CompositeResource {
  * Class OptionalElt.
  * @extends CompositeResource
  */
-export class OptionalElt extends CompositeResource{
+export class OptionalElt extends CompositeResource {
   /**
    * Create a OptionalElt.
    * @param {object} elts - The elts value.
    */
-  constructor(elts)  {
-    super(elts,"optional",DEFAULT_TAG,"default");
+  constructor(elts) {
+    super(elts, "optional", DEFAULT_TAG, "default");
     // skip node
-    this.skip = (new TerminalResource("skip","terminal","mark",this.provider))._subType_("skip");
+    this.skip = (new TerminalResource("skip", "terminal", "mark", this.provider))._subType_("skip");
   }
 
-  _add_(elt){
+  _add_(elt) {
     // only one elt can be added
-    if(this.elts.length > 0){
-      this.elts.splice(0,this.elts.length);
+    if (this.elts.length > 0) {
+      this.elts.splice(0, this.elts.length);
     }
     this.elts.push(this.resolveElt(elt));
     return this;
@@ -86,15 +86,15 @@ export class RepeatElt extends CompositeResource {
    * @param {object} elts - The elts value.
    */
   constructor(elts) {
-    super(elts,"repeat",DEFAULT_TAG,"default");
+    super(elts, "repeat", DEFAULT_TAG, "default");
     // loop node
-    this.loop = (new TerminalResource("loop","terminal","mark",this.provider))._subType_("repeat");
+    this.loop = (new TerminalResource("loop", "terminal", "mark", this.provider))._subType_("repeat");
   }
 
-  _add_(elt){
+  _add_(elt) {
     // only one elt can be added
-    if(this.elts.length > 0){
-      this.elts.splice(0,this.elts.length);
+    if (this.elts.length > 0) {
+      this.elts.splice(0, this.elts.length);
     }
     this.elts.push(this.resolveElt(elt));
     return this;
@@ -111,7 +111,7 @@ export class SequenceElt extends CompositeResource {
    * @param {object} elts - The elts value.
    */
   constructor(elts) {
-    super(elts,"sequence",DEFAULT_TAG,"default");
+    super(elts, "sequence", DEFAULT_TAG, "default");
   }
 
 }
@@ -119,14 +119,14 @@ export class SequenceElt extends CompositeResource {
 /**
  * Class TerminalElt.
  */
-export class TerminalElt extends TerminalResource{
+export class TerminalElt extends TerminalResource {
 
   /**
    * Create a TerminalElt.
    * @param {object} elt - The elt value.
    */
   constructor(elt) {
-    super(elt,"terminal",DEFAULT_TAG,"default");
+    super(elt, "terminal", DEFAULT_TAG, "default");
   }
 
 }
@@ -141,7 +141,7 @@ export class GroupElt extends CompositeResource {
    * @param {object} elts - The elts value.
    */
   constructor(elts) {
-    super(elts,"group","container","default");
+    super(elts, "group", "container", "default");
   }
 
 }

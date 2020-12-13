@@ -21,7 +21,7 @@ const {
 const DEBUG = true;
 
 function debug(msg) {
-  if(DEBUG) {
+  if (DEBUG) {
     console.log(msg);
   }
 }
@@ -30,31 +30,31 @@ const System = window.System;
 var systemJSPrototype = System.constructor.prototype;
 // Hookable transform function!
 systemJSPrototype.transform = function (_id, source) {
-  if(isScript(_id)) {
+  if (isScript(_id)) {
     // If code is a Sytem or AMD module
-    if( !source.startsWith('System.register') && !source.startsWith('define')) {
+    if (!source.startsWith('System.register') && !source.startsWith('define')) {
       // If code is not a Sytem or AMD module transpile it
       let result = ts.transpileModule(
-        source, 
-        { 
-          compilerOptions: { 
+        source,
+        {
+          compilerOptions: {
             module: ts.ModuleKind.AMD,
             moduleResolution: ts.ModuleResolutionKind.Node,
-            esModuleInterop: true 
+            esModuleInterop: true
           }
         }
       );
-      debug('transpiled code:\n'+result.outputText); 
+      debug('transpiled code:\n' + result.outputText);
       return result.outputText;
     }
-  } 
+  }
 
   return source;
 };
 
 
 // Re-export topology-dsl-core
-System.register("topology-dsl-core",[], function (exports_1) {
+System.register("topology-dsl-core", [], function (exports_1) {
   "use strict";
   exports_1(model);
   return {
@@ -64,36 +64,36 @@ System.register("topology-dsl-core",[], function (exports_1) {
   };
 });
 
-export function parseDsl(input,dslModule){
+export function parseDsl(input, dslModule) {
 
   // Get module ids
-  let MODULE_IDS = Object.keys(dslModule); 
+  let MODULE_IDS = Object.keys(dslModule);
   // Parse text
   // eslint-disable-next-line
-  let factoryFn = new Function("dslModule","return new Map();");
+  let factoryFn = new Function("dslModule", "return new Map();");
   let variableIds = [];
   let moduleIds = [];
- 
-  let callbackFn = function (elt){
+
+  let callbackFn = function (elt) {
     // Extract Identifiers
-    if(elt.type === 'VariableDeclaration'){
+    if (elt.type === 'VariableDeclaration') {
       let decl = elt.declarations[0];
       let name = decl.id.name;
       let value = name;
 
-      if(decl.init.type === "ArrowFunctionExpression" || decl.init.type === "FunctionExpression") {
-        value = name+"()";
-      } 
+      if (decl.init.type === "ArrowFunctionExpression" || decl.init.type === "FunctionExpression") {
+        value = name + "()";
+      }
       variableIds.push(`result.set('${name}',${value});`);
 
-    } else if (elt.type === 'CallExpression'){
+    } else if (elt.type === 'CallExpression') {
       let name = elt.callee.name;
       moduleIds.push(name);
     }
   };
 
   try {
-    let tree = esprima.parseScript(input,{},callbackFn);
+    let tree = esprima.parseScript(input, {}, callbackFn);
 
     // Extract call ids
     // Keep only ids in the default  
@@ -103,7 +103,7 @@ export function parseDsl(input,dslModule){
     });
 
     let text =
-`const {
+      `const {
 ${moduleIds.join(",\n")}
 } = dslModule;
 
@@ -113,11 +113,11 @@ let result = new Map();
 ${variableIds.join("\n")}
 return result;
 `;
-  debug(text);
+    debug(text);
     // eslint-disable-next-line
-    factoryFn = new Function("dslModule",text);
+    factoryFn = new Function("dslModule", text);
 
-  } catch(e) {
+  } catch (e) {
     console.error(e.name + ': ' + e.message);
   }
 
@@ -126,33 +126,37 @@ return result;
 }
 
 function isScript(source) {
-  return (source.endsWith('.js') || source.endsWith('.jsx') || source.endsWith('.ts') || source.endsWith('.tsx'));
+  return (source.endsWith('.js') ||
+    source.endsWith('.jsx') ||
+    source.endsWith('.ts') ||
+    source.endsWith('.tsx')
+  );
 }
 // To resolve relative urls
-const IMPORT_ID = location.href+"IMPORT.js";
-export function parseDslModule(source,dslModule) {
+const IMPORT_ID = location.href + "IMPORT.js";
+export function parseDslModule(source, dslModule) {
   let importPromise = null;
-  if(isScript(source)) {
-    importPromise = importURL( source,dslModule);
+  if (isScript(source)) {
+    importPromise = importURL(source, dslModule);
 
   } else {
-    importPromise = importSource( source,dslModule);
+    importPromise = importSource(source, dslModule);
   }
 
   // Convert exports to map
-  if(importPromise != null) {
+  if (importPromise != null) {
     return importPromise.then((modules) => {
       let variables = new Map();
-      for ( let key in modules) {
-        if ( key !== 'default' && !key.startsWith('_')) {
-          variables.set(key,modules[key]);
+      for (let key in modules) {
+        if (key !== 'default' && !key.startsWith('_')) {
+          variables.set(key, modules[key]);
         }
       }
       return variables;
     }).catch((err) => {
       console.log(err);
       let variables = new Map();
-      variables.set('ERROR',null);
+      variables.set('ERROR', null);
       return variables;
     });
   } else {
@@ -169,12 +173,12 @@ function importSource(source) {
   // Transpile code to Module
   try {
     let result = ts.transpileModule(
-      source, 
-      { 
-        compilerOptions: { 
+      source,
+      {
+        compilerOptions: {
           module: ts.ModuleKind.AMD,
           moduleResolution: ts.ModuleResolutionKind.Node,
-          esModuleInterop: true 
+          esModuleInterop: true
         }
       }
     );
@@ -184,7 +188,7 @@ function importSource(source) {
 
     (0, eval)(result.outputText);
     // Invalidate import cache
-    if(System.has(IMPORT_ID)){
+    if (System.has(IMPORT_ID)) {
       System.delete(IMPORT_ID);
     }
     // Re-register the module
@@ -199,28 +203,31 @@ function importSource(source) {
 
 function importURL(url) {
   debug('importURL -> ' + url);
+  if (System.has(url)) {
+    System.delete(url);
+  }
   return System.import(url);
 }
 
 
-export function resolveImports(input){
-  const result = new Promise( (resolveFn,rejectFn) => {
+export function resolveImports(input) {
+  const result = new Promise((resolveFn, rejectFn) => {
 
     const toload = new Map(); // Map of external imports to load with fetch
     // AST callback function to extract imports
-    let callbackFn = function (elt){
+    let callbackFn = function (elt) {
       // Extract Identifiers
-      if(elt.type === "CallExpression" && elt.callee.name === "load") {
+      if (elt.type === "CallExpression" && elt.callee.name === "load") {
         // Extract parameters from function name "load" 
         // Add files to load async
         let key = elt.arguments[0].value;
-        toload.set(key,null);
+        toload.set(key, null);
       }
     };
 
     try {
-      let tree = esprima.parseScript(input,{},callbackFn);
-    } catch(e) {
+      let tree = esprima.parseScript(input, {}, callbackFn);
+    } catch (e) {
       console.error(e.name + ': ' + e.message);
       rejectFn(e);
     }
@@ -231,22 +238,22 @@ export function resolveImports(input){
       loadpromises.push(
         fetch(key)
           .then(response => response.json())
-          .then( function(data) { 
-            console.log("loaded -> "+key);
-            map.set(key,jsonToDslObject(data));
+          .then(function (data) {
+            console.log("loaded -> " + key);
+            map.set(key, jsonToDslObject(data));
           })
       );
     });
     // Wait on all promises to load
     Promise.allSettled(loadpromises).then((iterable) => {
-      console.log("loaded imports -> "+iterable);
+      console.log("loaded imports -> " + iterable);
       // Delegate to main promise (map of resolved imports)
       resolveFn(toload);
     })
-    .catch((error) => {
-      console.error('Error:', error);
-      rejectFn(error);
-    });
+      .catch((error) => {
+        console.error('Error:', error);
+        rejectFn(error);
+      });
 
   });
 
