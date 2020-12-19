@@ -1,18 +1,18 @@
-const ts = require("typescript/lib/typescriptServices.js");
-require("systemjs/dist/system.js");
-require("systemjs/dist/extras/global.js");
-require("systemjs/dist/extras/amd.js");
-require("systemjs/dist/extras/transform.js");
-require("systemjs/dist/extras/dynamic-import-maps.js");
-require("systemjs/dist/extras/named-exports.js");
-require("systemjs/dist/extras/named-register.js");
+const ts = require('typescript/lib/typescriptServices.js');
+require('systemjs/dist/system.js');
+require('systemjs/dist/extras/global.js');
+require('systemjs/dist/extras/amd.js');
+require('systemjs/dist/extras/transform.js');
+require('systemjs/dist/extras/dynamic-import-maps.js');
+require('systemjs/dist/extras/named-exports.js');
+require('systemjs/dist/extras/named-register.js');
 //*/
 //var esprima = require('esprima');
-//var escodegen = require("escodegen");
+//var escodegen = require('escodegen');
 //import * as escodegen from 'escodegen';
 import * as esprima from 'esprima';
 import { getSupportedCodeFixes } from 'typescript';
-import * as model from "../tree";
+import * as model from '../tree';
 
 const {
   jsonToDslObject
@@ -52,17 +52,19 @@ systemJSPrototype.transform = function (_id, source) {
   return source;
 };
 
-
 // Re-export topology-dsl-core
-System.register("topology-dsl-core", [], function (exports_1) {
-  "use strict";
+const exportsFn = function (exports_1) {
+  'use strict';
   exports_1(model);
   return {
     setters: [],
     execute: function () {
     }
   };
-});
+};
+// Dynamically register modules
+System.register('topology-dsl-core', [], exportsFn);
+System.register('@imaguiraga/topology-dsl-core', [], exportsFn);
 
 export function parseDsl(input, dslModule) {
 
@@ -70,7 +72,7 @@ export function parseDsl(input, dslModule) {
   let MODULE_IDS = Object.keys(dslModule);
   // Parse text
   // eslint-disable-next-line
-  let factoryFn = new Function("dslModule", "return new Map();");
+  let factoryFn = new Function('dslModule', 'return new Map();');
   let variableIds = [];
   let moduleIds = [];
 
@@ -81,8 +83,8 @@ export function parseDsl(input, dslModule) {
       let name = decl.id.name;
       let value = name;
 
-      if (decl.init.type === "ArrowFunctionExpression" || decl.init.type === "FunctionExpression") {
-        value = name + "()";
+      if (decl.init.type === 'ArrowFunctionExpression' || decl.init.type === 'FunctionExpression') {
+        value = name + '()';
       }
       variableIds.push(`result.set('${name}',${value});`);
 
@@ -104,18 +106,18 @@ export function parseDsl(input, dslModule) {
 
     let text =
       `const {
-${moduleIds.join(",\n")}
+${moduleIds.join(',\n')}
 } = dslModule;
 
 ${input}
 
 let result = new Map();
-${variableIds.join("\n")}
+${variableIds.join('\n')}
 return result;
 `;
     debug(text);
     // eslint-disable-next-line
-    factoryFn = new Function("dslModule", text);
+    factoryFn = new Function('dslModule', text);
 
   } catch (e) {
     console.error(e.name + ': ' + e.message);
@@ -133,7 +135,7 @@ function isScript(source) {
   );
 }
 // To resolve relative urls
-const IMPORT_ID = location.href + "IMPORT.js";
+const IMPORT_ID = location.href + 'IMPORT.js';
 export function parseDslModule(source, dslModule) {
   let importPromise = null;
   if (isScript(source)) {
@@ -217,8 +219,8 @@ export function resolveImports(input) {
     // AST callback function to extract imports
     let callbackFn = function (elt) {
       // Extract Identifiers
-      if (elt.type === "CallExpression" && elt.callee.name === "load") {
-        // Extract parameters from function name "load" 
+      if (elt.type === 'CallExpression' && elt.callee.name === 'load') {
+        // Extract parameters from function name 'load' 
         // Add files to load async
         let key = elt.arguments[0].value;
         toload.set(key, null);
@@ -239,14 +241,14 @@ export function resolveImports(input) {
         fetch(key)
           .then(response => response.json())
           .then(function (data) {
-            console.log("loaded -> " + key);
+            console.log('loaded -> ' + key);
             map.set(key, jsonToDslObject(data));
           })
       );
     });
     // Wait on all promises to load
     Promise.allSettled(loadpromises).then((iterable) => {
-      console.log("loaded imports -> " + iterable);
+      console.log('loaded imports -> ' + iterable);
       // Delegate to main promise (map of resolved imports)
       resolveFn(toload);
     })

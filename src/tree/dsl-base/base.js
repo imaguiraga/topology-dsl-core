@@ -10,7 +10,7 @@ function* idGenFn(prefix, index) {
   }
 }
 
-export const NODEIDGENFN = idGenFn("node.", 0);
+export const NODEIDGENFN = idGenFn('node.', 0);
 
 /**
  * Class TerminalResource.
@@ -27,13 +27,13 @@ export class TerminalResource {
     let self = this;
     // Nex Id Generator
     self.idGenIt = NODEIDGENFN;
-    self.title = "title";
+    self.title = 'title';
 
     //get new id
-    self.resourceType = resourceType || "terminal";
+    self.resourceType = resourceType || 'terminal';
     self.subType = self.resourceType;// use for extending the resource
-    self.tagName = tagName || "resource";
-    self.id = self.subType + "." + this.idGenIt.next().value;
+    self.tagName = tagName || 'resource';
+    self.id = self.subType + '.' + this.idGenIt.next().value;
     self.provider = provider;
     self.compound = false;
 
@@ -164,19 +164,19 @@ export class TerminalResource {
   }
 
   isGroup() {
-    return (this.resourceType === "group");
+    return (this.resourceType === 'group');
   }
 
   resolveElt(elt) {
     // Only accept primitive types as Terminal Element 
     let result = null;
-    if (typeof elt !== "undefined") {
+    if (typeof elt !== 'undefined') {
       try {
-        if (typeof elt === "function") {
+        if (typeof elt === 'function') {
           result = elt.call();
         }
 
-        if (typeof result === "object") {
+        if (typeof result === 'object') {
           // Allow complex element as terminal
           result = elt;
 
@@ -186,18 +186,18 @@ export class TerminalResource {
         }
 
       } catch (err) {
-        console.error(err.message + " - " + err);
+        console.error(err.message + ' - ' + err);
       }
     }
     return result;
   }
 
   toElt(elt) {
-    if (typeof elt === "function") {
+    if (typeof elt === 'function') {
       return elt.call();
-    } else if (typeof elt !== "object") {
+    } else if (typeof elt !== 'object') {
       // very likely a primitive type
-      return new TerminalResource(elt, "terminal", "resource", this.provider);
+      return new TerminalResource(elt, 'terminal', 'resource', this.provider);
     }
     // default to object
     return elt;
@@ -239,9 +239,9 @@ export class TerminalResource {
     if (value) {
       this.subType = value;
       // Replace prefix with subType
-      let tmp = this.id.split("\.");
+      let tmp = this.id.split('\.');
       tmp[0] = this.subType;
-      this.id = tmp.join(".");
+      this.id = tmp.join('.');
     }
     return this;
   }
@@ -349,8 +349,8 @@ export class CompositeResource extends TerminalResource {
     let self = this;
     self.elts = [];
     self.title = null;
-    self.start = new TerminalResource("start", "terminal", "mark", provider);
-    self.finish = new TerminalResource("finish", "terminal", "mark", provider);
+    self.start = new TerminalResource('start', 'terminal', 'mark', provider);
+    self.finish = new TerminalResource('finish', 'terminal', 'mark', provider);
     self.compound = true;
 
     if (Array.isArray(elts)) {
@@ -366,7 +366,7 @@ export class CompositeResource extends TerminalResource {
     }
 
     if (self.title === null) {
-      self.title = "" + self.id;
+      self.title = '' + self.id;
     }
   }
 
