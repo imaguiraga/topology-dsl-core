@@ -31,7 +31,7 @@ var systemJSPrototype = System.constructor.prototype;
 // Hookable transform function!
 systemJSPrototype.transform = function (_id, source) {
   if (isScript(_id)) {
-    // If code is a Sytem or AMD module
+    // If code is a System or AMD module
     if (!source.startsWith('System.register') && !source.startsWith('define')) {
       // If code is not a Sytem or AMD module transpile it
       let result = ts.transpileModule(
@@ -53,18 +53,25 @@ systemJSPrototype.transform = function (_id, source) {
 };
 
 // Re-export topology-dsl-core
-const exportsFn = function (exports_1) {
-  'use strict';
-  exports_1(model);
-  return {
-    setters: [],
-    execute: function () {
-    }
+
+export function registerJSModule(id, _module_) {
+  const exportsFn = function (exports_1) {
+    'use strict';
+    exports_1(_module_);
+    return {
+      setters: [],
+      execute: function () {
+      }
+    };
   };
-};
-// Dynamically register modules
-System.register('topology-dsl-core', [], exportsFn);
-System.register('@imaguiraga/topology-dsl-core', [], exportsFn);
+
+  System.register(id, [], exportsFn);
+}
+
+// Dynamically register compiled modules
+registerJSModule('topology-dsl', model);
+registerJSModule('@imaguiraga/topology-dsl-core', model);
+registerJSModule('core-dsl', model);
 
 export function parseDsl(input, dslModule) {
 
@@ -139,10 +146,10 @@ const IMPORT_ID = location.href + 'IMPORT.js';
 export function parseDslModule(source, dslModule) {
   let importPromise = null;
   if (isScript(source)) {
-    importPromise = importURL(source, dslModule);
+    importPromise = importURL(IMPORT_ID, source);
 
   } else {
-    importPromise = importSource(source, dslModule);
+    importPromise = importSource(IMPORT_ID, source);
   }
 
   // Convert exports to map
@@ -167,7 +174,7 @@ export function parseDslModule(source, dslModule) {
 
 }
 
-function importSource(source) {
+function importSource(id, source) {
   // https://github.com/Microsoft/TypeScript/wiki/Using-the-Compiler-API
   // https://jsfiddle.net/k78t436y/
   // https://unpkg.com/typescript@latest/lib/typescriptServices.js
@@ -190,17 +197,17 @@ function importSource(source) {
 
     (0, eval)(result.outputText);
     // Invalidate import cache
-    if (System.has(IMPORT_ID)) {
-      System.delete(IMPORT_ID);
+    if (System.has(id)) {
+      System.delete(id);
     }
     // Re-register the module
-    System.registerRegistry[IMPORT_ID] = System.getRegister();
+    System.registerRegistry[id] = System.getRegister();
     debug(System.getRegister());
   } catch (err) {
     console.log(err);
     return null;
   }
-  return System.import(IMPORT_ID);
+  return System.import(id);
 }
 
 function importURL(url) {
@@ -210,7 +217,6 @@ function importURL(url) {
   }
   return System.import(url);
 }
-
 
 export function resolveImports(input) {
   const result = new Promise((resolveFn, rejectFn) => {
