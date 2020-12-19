@@ -3,7 +3,7 @@ import {
   TerminalResource
 } from '../dsl-base/base.js';
 
-export const DEFAULT_TAG = "flow";
+export const DEFAULT_TAG = 'flow';
 
 /**
  * Class FanInFanOutElt.
@@ -15,7 +15,7 @@ export class FanOutFanInElt extends CompositeResource {
    * @param {object} elts - The elts value.
    */
   constructor(elts) {
-    super(elts, "fanOut_fanIn", DEFAULT_TAG, "default");
+    super(elts, 'fanOut_fanIn', DEFAULT_TAG, 'default');
   }
 
 }
@@ -30,9 +30,8 @@ export class FanInElt extends CompositeResource {
    * @param {object} elts - The elts value.
    */
   constructor(elts) {
-    super(elts, "fanIn", DEFAULT_TAG, "default");
+    super(elts, 'fanIn', DEFAULT_TAG, 'default');
   }
-
 
 }
 
@@ -46,7 +45,7 @@ export class FanOutElt extends CompositeResource {
    * @param {object} elts - The elts value.
    */
   constructor(elts) {
-    super(elts, "fanOut", DEFAULT_TAG, "default");
+    super(elts, 'fanOut', DEFAULT_TAG, 'default');
   }
 
 }
@@ -61,9 +60,9 @@ export class OptionalElt extends CompositeResource {
    * @param {object} elts - The elts value.
    */
   constructor(elts) {
-    super(elts, "optional", DEFAULT_TAG, "default");
+    super(elts, 'optional', DEFAULT_TAG, 'default');
     // skip node
-    this.skip = (new TerminalResource("skip", "terminal", "mark", this.provider))._subType_("skip");
+    this.skip = (new TerminalResource('skip', 'terminal', 'mark', this.provider))._subType_('skip');
   }
 
   _add_(elt) {
@@ -86,9 +85,9 @@ export class RepeatElt extends CompositeResource {
    * @param {object} elts - The elts value.
    */
   constructor(elts) {
-    super(elts, "repeat", DEFAULT_TAG, "default");
+    super(elts, 'repeat', DEFAULT_TAG, 'default');
     // loop node
-    this.loop = (new TerminalResource("loop", "terminal", "mark", this.provider))._subType_("repeat");
+    this.loop = (new TerminalResource('loop', 'terminal', 'mark', this.provider))._subType_('repeat');
   }
 
   _add_(elt) {
@@ -111,7 +110,7 @@ export class SequenceElt extends CompositeResource {
    * @param {object} elts - The elts value.
    */
   constructor(elts) {
-    super(elts, "sequence", DEFAULT_TAG, "default");
+    super(elts, 'sequence', DEFAULT_TAG, 'default');
   }
 
 }
@@ -126,7 +125,7 @@ export class TerminalElt extends TerminalResource {
    * @param {object} elt - The elt value.
    */
   constructor(elt) {
-    super(elt, "terminal", DEFAULT_TAG, "default");
+    super(elt, 'terminal', DEFAULT_TAG, 'default');
   }
 
 }
@@ -141,7 +140,7 @@ export class GroupElt extends CompositeResource {
    * @param {object} elts - The elts value.
    */
   constructor(elts) {
-    super(elts, "group", "container", "default");
+    super(elts, 'group', 'container', 'default');
   }
 
 }

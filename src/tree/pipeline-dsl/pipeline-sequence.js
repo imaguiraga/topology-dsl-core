@@ -2,7 +2,7 @@ import {
   CompositeResource
 } from '../dsl-base/base.js';
 
-import { PIPELINE_RESOURCE_TYPE } from "./pipeline-terminal.js";
+import { PIPELINE_RESOURCE_TYPE } from './pipeline-terminal.js';
 
 /**
  * Class PipelineElt.
@@ -15,7 +15,7 @@ export class PipelineElt extends CompositeResource {
    * @param {object} ctx - The ctx value.
    */
   constructor(elts, ctx) {
-    super(elts, ctx, "container", "pipeline", PIPELINE_RESOURCE_TYPE);
+    super(elts, ctx, 'container', 'pipeline', PIPELINE_RESOURCE_TYPE);
   }
 
 }
@@ -40,7 +40,7 @@ export class JobElt extends CompositeResource {
    * @param {object} ctx - The ctx value.
    */
   constructor(elts, ctx) {
-    super(elts, ctx, "container", "job", PIPELINE_RESOURCE_TYPE);
+    super(elts, ctx, 'container', 'job', PIPELINE_RESOURCE_TYPE);
   }
 
 }
@@ -65,7 +65,7 @@ export class StageElt extends CompositeResource {
    * @param {object} ctx - The ctx value.
    */
   constructor(elts, ctx) {
-    super(elts, ctx, "container", "stage", PIPELINE_RESOURCE_TYPE);
+    super(elts, ctx, 'container', 'stage', PIPELINE_RESOURCE_TYPE);
   }
 
 }

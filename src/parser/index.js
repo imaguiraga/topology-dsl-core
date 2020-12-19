@@ -1,2 +1,2 @@
 /* parser */
-export * from "./dsl-parser.js";
+export * from './dsl-parser.js';
