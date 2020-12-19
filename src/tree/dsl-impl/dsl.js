@@ -9,7 +9,7 @@ import {
   GroupElt
 } from './resource.js';
 
-import {BASE_ICONS_MAP} from './base-icons-map';
+import { BASE_ICONS_MAP } from './base-icons-map';
 
 /**
  * Create a fanOut_fanIn dsl tree.
@@ -17,11 +17,11 @@ import {BASE_ICONS_MAP} from './base-icons-map';
  * @return {object} flow dsl.
  */
 export function fanOut_fanIn(...elts) {
-  return new FanOutFanInElt([...elts])._set_('style',BASE_ICONS_MAP.get('fanOut_fanIn'));
+  return new FanOutFanInElt([...elts])._set_('style', BASE_ICONS_MAP.get('fanOut_fanIn'));
 }
 
 export function choice(...elts) {
-  return fanOut_fanIn(...elts)._subType_('choice')._set_('style',BASE_ICONS_MAP.get('choice'));
+  return fanOut_fanIn(...elts)._subType_('choice')._set_('style', BASE_ICONS_MAP.get('choice'));
 }
 
 /**
@@ -30,11 +30,11 @@ export function choice(...elts) {
  * @return {object} flow dsl.
  */
 export function fanIn(...elts) {
-  return new FanInElt([...elts])._set_('style',BASE_ICONS_MAP.get('fanIn'));
+  return new FanInElt([...elts])._set_('style', BASE_ICONS_MAP.get('fanIn'));
 }
 
 export function merge(...elts) {
-  return fanIn(...elts)._subType_('merge')._set_('style',BASE_ICONS_MAP.get('merge'));
+  return fanIn(...elts)._subType_('merge')._set_('style', BASE_ICONS_MAP.get('merge'));
 }
 
 /**
@@ -43,31 +43,31 @@ export function merge(...elts) {
  * @return {object} flow dsl.
  */
 export function fanOut(...elts) {
-  return new FanOutElt([...elts])._set_('style',BASE_ICONS_MAP.get('fanOut'));
+  return new FanOutElt([...elts])._set_('style', BASE_ICONS_MAP.get('fanOut'));
 }
 
 export function branch(...elts) {
-  return fanOut(...elts)._subType_('branch')._set_('style',BASE_ICONS_MAP.get('branch'));
+  return fanOut(...elts)._subType_('branch')._set_('style', BASE_ICONS_MAP.get('branch'));
 }
 
 export function split(...elts) {
-  return fanOut(...elts)._subType_('split')._set_('style',BASE_ICONS_MAP.get('split'));
+  return fanOut(...elts)._subType_('split')._set_('style', BASE_ICONS_MAP.get('split'));
 }
 
 export function tree(...elts) {
-  return fanOut(...elts)._subType_('tree')._set_('style',BASE_ICONS_MAP.get('tree'));
+  return fanOut(...elts)._subType_('tree')._set_('style', BASE_ICONS_MAP.get('tree'));
 }
 
 export function link(...elts) {
-  return fanOut(...elts)._subType_('link')._set_('style',BASE_ICONS_MAP.get('link'));
+  return fanOut(...elts)._subType_('link')._set_('style', BASE_ICONS_MAP.get('link'));
 }
 
 export function use(...elts) {
-  return fanOut(...elts)._subType_('use')._set_('style',BASE_ICONS_MAP.get('use'));
+  return fanOut(...elts)._subType_('use')._set_('style', BASE_ICONS_MAP.get('use'));
 }
 
 export function parallel(...elts) {
-  return fanOut(...elts)._subType_('parallel')._set_('style',BASE_ICONS_MAP.get('parallel'));
+  return fanOut(...elts)._subType_('parallel')._set_('style', BASE_ICONS_MAP.get('parallel'));
 }
 
 /**
@@ -76,7 +76,7 @@ export function parallel(...elts) {
  * @return {object} flow dsl.
  */
 export function optional(elt) {
-  return new OptionalElt(elt)._set_('style',BASE_ICONS_MAP.get('optional'));
+  return new OptionalElt(elt)._set_('style', BASE_ICONS_MAP.get('optional'));
 }
 
 /**
@@ -85,11 +85,11 @@ export function optional(elt) {
  * @return {object} flow dsl.
  */
 export function repeat(elt) {
-  return new RepeatElt(elt)._set_('style',BASE_ICONS_MAP.get('repeat'));
+  return new RepeatElt(elt)._set_('style', BASE_ICONS_MAP.get('repeat'));
 }
 
 export function oneOrMore(elt) {
-  return repeat(elt)._set_('style',BASE_ICONS_MAP.get('oneOrMore'));
+  return repeat(elt)._set_('style', BASE_ICONS_MAP.get('oneOrMore'));
 }
 
 /**
@@ -98,15 +98,15 @@ export function oneOrMore(elt) {
  * @return {object} flow dsl.
  */
 export function sequence(...elts) {
-  return new SequenceElt([...elts])._set_('style',BASE_ICONS_MAP.get('sequence'));
+  return new SequenceElt([...elts])._set_('style', BASE_ICONS_MAP.get('sequence'));
 }
 
 export function process(...elts) {
-  return sequence(...elts)._subType_('process')._set_('style',BASE_ICONS_MAP.get('process'));
+  return sequence(...elts)._subType_('process')._set_('style', BASE_ICONS_MAP.get('process'));
 }
 
 export function activity(...elts) {
-  return sequence(...elts)._subType_('activity')._set_('style',BASE_ICONS_MAP.get('activity'));
+  return sequence(...elts)._subType_('activity')._set_('style', BASE_ICONS_MAP.get('activity'));
 }
 
 /**
@@ -115,11 +115,11 @@ export function activity(...elts) {
  * @return {object} flow dsl.
  */
 export function terminal(elt) {
-  return new TerminalElt(elt)._set_('style',BASE_ICONS_MAP.get('terminal'));
+  return new TerminalElt(elt)._set_('style', BASE_ICONS_MAP.get('terminal'));
 }
 
 export function transition(elt) {
-  return terminal(elt)._subType_('transition')._set_('style',BASE_ICONS_MAP.get('transition'));
+  return terminal(elt)._subType_('transition')._set_('style', BASE_ICONS_MAP.get('transition'));
 }
 
 /**
@@ -128,7 +128,7 @@ export function transition(elt) {
  * @return {object} flow dsl.
  */
 export function state(elt) {
-  return terminal(elt)._subType_('state')._set_('style',BASE_ICONS_MAP.get('state'));
+  return terminal(elt)._subType_('state')._set_('style', BASE_ICONS_MAP.get('state'));
 }
 
 /**
@@ -137,7 +137,7 @@ export function state(elt) {
  * @return {object} flow dsl.
  */
 export function zeroOrMore(elt) {
-  return optional(repeat(elt))._set_('style',BASE_ICONS_MAP.get('zeroOrMore'));
+  return optional(repeat(elt))._set_('style', BASE_ICONS_MAP.get('zeroOrMore'));
 }
 
 /**
@@ -146,7 +146,7 @@ export function zeroOrMore(elt) {
  * @return {object} resource dsl.
  */
 export function resource(elt) {
-  return terminal(elt)._subType_('resource')._set_('style',BASE_ICONS_MAP.get('resource'));
+  return terminal(elt)._subType_('resource')._set_('style', BASE_ICONS_MAP.get('resource'));
 }
 
 /**
@@ -155,7 +155,7 @@ export function resource(elt) {
  * @return {object} group dsl.
  */
 export function group(...elts) {
-  return new GroupElt([...elts])._set_('style',BASE_ICONS_MAP.get('group'));
+  return new GroupElt([...elts])._set_('style', BASE_ICONS_MAP.get('group'));
 }
 
 // pipeline -> stages -> jobs -> tasks -> steps 
