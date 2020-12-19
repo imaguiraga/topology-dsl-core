@@ -1,13 +1,12 @@
 import {
   TerminalResource,
   CompositeResource
-} from "./base.js";
+} from './base.js';
 
 export function isContainer(n) {
   return (n.children && n.children != null && n.children.length > 0) ||
     (n && n.model && n.model.compound === true);
 }
-
 
 export function clone_bak(obj) {
   let copy = Object.create(Object.getPrototypeOf(obj), Object.getOwnPropertyDescriptors(obj));
@@ -18,13 +17,13 @@ export function clone_bak(obj) {
 export function resetIds(obj, idx) {
   if (obj.id) {
     // Append a suffix
-    obj.id = obj.id + "_" + idx;
+    obj.id = obj.id + '_' + idx;
 
     if (obj._start !== null) {
-      obj._start.id = obj._start.id + "_" + idx;
+      obj._start.id = obj._start.id + '_' + idx;
     }
     if (obj._finish !== null) {
-      obj._finish.id = obj._finish.id + "_" + idx;
+      obj._finish.id = obj._finish.id + '_' + idx;
     }
   }
   return obj;

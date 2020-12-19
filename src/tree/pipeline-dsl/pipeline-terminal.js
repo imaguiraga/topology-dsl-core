@@ -2,7 +2,7 @@ import {
   TerminalResource
 } from '../dsl-base/base.js';
 
-export const PIPELINE_RESOURCE_TYPE = "pipeline";
+export const PIPELINE_RESOURCE_TYPE = 'pipeline';
 /**
  * Class StepPipelineElt.
  */
@@ -15,7 +15,7 @@ export class StepPipelineElt extends TerminalResource {
    * @param {string} tagName - The tagName value.
    */
   constructor(elts, ctx) {
-    super(elts, ctx, "terminal", "step", PIPELINE_RESOURCE_TYPE);
+    super(elts, ctx, 'terminal', 'step', PIPELINE_RESOURCE_TYPE);
   }
 
 }
@@ -32,7 +32,7 @@ export class DataPipelineElt extends TerminalResource {
    * @param {string} tagName - The tagName value.
    */
   constructor(elts, ctx) {
-    super(elts, ctx, "terminal", "data", PIPELINE_RESOURCE_TYPE);
+    super(elts, ctx, 'terminal', 'data', PIPELINE_RESOURCE_TYPE);
   }
 
 }
