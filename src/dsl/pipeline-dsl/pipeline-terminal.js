@@ -1,6 +1,6 @@
 import {
   TerminalResource
-} from '../dsl-base/base.js';
+} from '../core-dsl/base.js';
 
 export const PIPELINE_RESOURCE_TYPE = 'pipeline';
 /**

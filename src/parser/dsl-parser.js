@@ -12,7 +12,7 @@ require('systemjs/dist/extras/named-register.js');
 //import * as escodegen from 'escodegen';
 import * as esprima from 'esprima';
 import { getSupportedCodeFixes } from 'typescript';
-import * as model from '../tree';
+import * as model from '../dsl';
 
 const {
   jsonToDslObject
