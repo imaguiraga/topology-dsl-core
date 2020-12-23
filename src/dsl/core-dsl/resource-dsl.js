@@ -7,7 +7,7 @@ import {
   SequenceElt,
   TerminalElt,
   GroupElt
-} from './resource.js';
+} from './resource-elt.js';
 
 import { BASE_ICONS_MAP } from './base-icons-map';
 
