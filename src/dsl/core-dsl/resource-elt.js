@@ -1,7 +1,7 @@
 import {
   CompositeResource,
   TerminalResource
-} from './base.js';
+} from './resource-base.js';
 
 export const DEFAULT_TAG = 'flow';
 
