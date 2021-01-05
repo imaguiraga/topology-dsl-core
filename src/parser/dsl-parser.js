@@ -206,7 +206,7 @@ function importSource(id, source) {
 
   } catch (err) {
     console.log(err);
-    return null;
+    return Promise.reject(err);
   }
   return System.import(id);
 }
@@ -259,10 +259,10 @@ export function resolveImports(input) {
       // Delegate to main promise (map of resolved imports)
       resolveFn(toload);
     })
-    .catch((error) => {
-      console.error('Error:', error);
-      rejectFn(error);
-    });
+      .catch((error) => {
+        console.error('Error:', error);
+        rejectFn(error);
+      });
 
   });
 
