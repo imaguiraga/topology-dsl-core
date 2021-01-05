@@ -157,17 +157,17 @@ export function parseDslModule(source, dslModule) {
     return importPromise.then((modules) => {
       let variables = new Map();
       for (let key in modules) {
+        // Exclude module specific properties
         if (key !== 'default' && !key.startsWith('_')) {
-          variables.set(key, modules[key]);
+          // Extract only subclasses of TerminalResource
+          if (modules[key] instanceof model.TerminalResource) {
+            variables.set(key, modules[key]);
+          }
         }
       }
       return variables;
-    }).catch((err) => {
-      console.log(err);
-      let variables = new Map();
-      variables.set('ERROR', null);
-      return variables;
     });
+
   } else {
     return Promise.resolve(new Map());
   }
@@ -203,6 +203,7 @@ function importSource(id, source) {
     // Re-register the module
     System.registerRegistry[id] = System.getRegister();
     debug(System.getRegister());
+
   } catch (err) {
     console.log(err);
     return null;
@@ -258,10 +259,10 @@ export function resolveImports(input) {
       // Delegate to main promise (map of resolved imports)
       resolveFn(toload);
     })
-      .catch((error) => {
-        console.error('Error:', error);
-        rejectFn(error);
-      });
+    .catch((error) => {
+      console.error('Error:', error);
+      rejectFn(error);
+    });
 
   });
 
