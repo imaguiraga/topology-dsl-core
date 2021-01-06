@@ -128,6 +128,7 @@ return result;
 
   } catch (e) {
     console.error(e.name + ': ' + e.message);
+    return Promise.reject(e);
   }
 
   return Promise.resolve(factoryFn(dslModule));
