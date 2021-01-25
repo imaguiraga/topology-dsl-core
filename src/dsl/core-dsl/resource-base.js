@@ -39,6 +39,7 @@ export class TerminalResource {
 
     self._start = null;
     self._finish = null;
+
     self.data = new Map();
     self.link = null;
     self.name = self.id;
@@ -121,18 +122,19 @@ export class TerminalResource {
 
   get start() {
     if (this._start == null) {
-      return {
+      this._start = {
         resourceType: this.resourceType,
         subType: this.subType,
         tagName: this.tagName,
-        id: this.id,
+        id: this.id + '.start',
         provider: this.provider,
-        compound: this.compound
+        compound: this.compound,
+        isTerminal: () => true,
+        elts: []
       };
-
-    } else {
-      return this._start;
     }
+
+    return this._start;
   }
 
   set start(val) {
@@ -141,18 +143,19 @@ export class TerminalResource {
 
   get finish() {
     if (this._finish == null) {
-      return {
+      this._finish = {
         resourceType: this.resourceType,
         subType: this.subType,
         tagName: this.tagName,
-        id: this.id,
+        id: this.id + '.finish',
         provider: this.provider,
-        compound: this.compound
+        compound: this.compound,
+        isTerminal: () => true,
+        elts: []
       };
-
-    } else {
-      return this._finish;
     }
+    return this._finish;
+
   }
 
   set finish(val) {
@@ -349,8 +352,10 @@ export class CompositeResource extends TerminalResource {
     let self = this;
     self.elts = [];
     self.title = null;
-    self.start = new TerminalResource('start', 'terminal', 'mark', provider);
-    self.finish = new TerminalResource('finish', 'terminal', 'mark', provider);
+    self._start = null;
+    self._finish = null;
+    //self.start = new TerminalResource('start', 'terminal', 'mark', provider);
+    //self.finish = new TerminalResource('finish', 'terminal', 'mark', provider);
     self.compound = true;
 
     if (Array.isArray(elts)) {
