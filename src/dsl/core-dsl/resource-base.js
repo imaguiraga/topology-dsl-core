@@ -56,6 +56,7 @@ export class TerminalResource {
     if (r !== null) {
       // only one elt can be added
       this.elts.push(r);
+      this.title = r.toString();
     }
 
   }
