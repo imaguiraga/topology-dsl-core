@@ -24,38 +24,60 @@ export class TerminalResource {
    * @param {string} provider - The resource provider value.
    */
   constructor(elts, resourceType, tagName, provider) {
-    let self = this;
     // Nex Id Generator
-    self.idGenIt = NODEIDGENFN;
-    self.title = 'title';
+    this.idGenIt = NODEIDGENFN;
+    this.title = 'title';
 
     //get new id
-    self.resourceType = resourceType || 'terminal';
-    self.subType = self.resourceType;// use for extending the resource
-    self.tagName = tagName || 'resource';
-    self.id = self.subType + '.' + this.idGenIt.next().value;
-    self.provider = provider;
-    self.compound = false;
+    this.resourceType = resourceType || 'terminal';
+    this.subType = this.resourceType;// use for extending the resource
+    this.tagName = tagName || 'resource';
+    this.id = this.subType + '.' + this.idGenIt.next().value;
+    this.provider = provider;
+    this.compound = false;
 
-    self._start = null;
-    self._finish = null;
+    // Layout direction
+    this.direction = null;
 
-    self.data = new Map();
-    self.link = null;
-    self.name = self.id;
-    self.title = self.id;
+    this._start = null;
+    this._finish = null;
 
-    self.elts = [];
+    this.data = new Map();
+    this.link = null;
+    this.name = this.id;
+    this.title = this.id;
+
+    this.elts = [];
     // Support for dataflow with input and output bindings
-    self.inputElts = [];
-    self.outputElts = [];
+    this.inputElts = [];
+    this.outputElts = [];
 
-    let r = self.resolveElt(elts);
+    let r = this.resolveElt(elts);
     if (r !== null) {
       // only one elt can be added
-      self.elts.push(r);
+      this.elts.push(r);
     }
 
+  }
+
+  top() {
+    this.direction = 'TOP';
+    return this;
+  }
+
+  down() {
+    this.direction = 'DOWN';
+    return this;
+  }
+
+  left() {
+    this.direction = 'LEFT';
+    return this;
+  }
+
+  right() {
+    this.direction = 'right';
+    return this;
   }
 
   /**
@@ -285,19 +307,18 @@ export class TerminalResource {
 
   // Inbound bindings
   _in_(...elts) {
-    let self = this;
     if (Array.isArray(elts)) {
       elts.forEach((e) => {
-        let r = self.toElt(e);
+        let r = this.toElt(e);
         if (r != null) {
-          self.inputElts.push(r);
+          this.inputElts.push(r);
         }
-      });
+      }, this);
 
     } else {
-      let r = self.toElt(elts);
+      let r = this.toElt(elts);
       if (r != null) {
-        self.inputElts.push(r);
+        this.inputElts.push(r);
       }
     }
 
@@ -306,19 +327,18 @@ export class TerminalResource {
 
   // Outbound bindings
   _out_(...elts) {
-    let self = this;
     if (Array.isArray(elts)) {
       elts.forEach((e) => {
-        let r = self.toElt(e);
+        let r = this.toElt(e);
         if (r != null) {
-          self.outputElts.push(r);
+          this.outputElts.push(r);
         }
-      });
+      },this);
 
     } else {
-      let r = self.toElt(elts);
+      let r = this.toElt(elts);
       if (r != null) {
-        self.outputElts.push(r);
+        this.outputElts.push(r);
       }
     }
 
@@ -349,29 +369,28 @@ export class CompositeResource extends TerminalResource {
    */
   constructor(elts, resourceType, tagName, provider) {
     super(elts, resourceType, tagName, provider);
-    let self = this;
-    self.elts = [];
-    self.title = null;
-    self._start = null;
-    self._finish = null;
-    //self.start = new TerminalResource('start', 'terminal', 'mark', provider);
-    //self.finish = new TerminalResource('finish', 'terminal', 'mark', provider);
-    self.compound = true;
+    this.elts = [];
+    this.title = null;
+    this._start = null;
+    this._finish = null;
+    //this.start = new TerminalResource('start', 'terminal', 'mark', provider);
+    //this.finish = new TerminalResource('finish', 'terminal', 'mark', provider);
+    this.compound = true;
 
     if (Array.isArray(elts)) {
-      self.elts = elts.map(
-        (elt) => { return self.resolveElt(elt); }
-      ).filter(e => { return e != null; });
+      this.elts = elts.map(
+        (elt) => { return this.resolveElt(elt); }, this
+      ).filter(e => { return e != null; }, this);
 
     } else {
-      let r = self.resolveElt(elts);
+      let r = this.resolveElt(elts);
       if (r != null) {
-        self.elts.push(r);
+        this.elts.push(r);
       }
     }
 
-    if (self.title === null) {
-      self.title = '' + self.id;
+    if (this.title === null) {
+      this.title = '' + this.id;
     }
   }
 
@@ -388,19 +407,18 @@ export class CompositeResource extends TerminalResource {
   }
 
   _add_(...elts) {
-    let self = this;
     if (Array.isArray(elts)) {
       elts.forEach((e) => {
-        let r = self.resolveElt(e);
+        let r = this.resolveElt(e);
         if (r != null) {
-          self.elts.push(r);
+          this.elts.push(r);
         }
-      });
+      }, this);
 
     } else {
-      let r = self.resolveElt(elts);
+      let r = this.resolveElt(elts);
       if (r != null) {
-        self.elts.push(r);
+        this.elts.push(r);
       }
     }
 
@@ -409,16 +427,15 @@ export class CompositeResource extends TerminalResource {
 
   // Add a reference if it doesn't exist
   _ref_(...elts) {
-    let self = this;
     if (Array.isArray(elts)) {
       elts.forEach((e) => {
-        if (!self.foundElt(e)) {
-          self._add_(e);
+        if (!this.foundElt(e)) {
+          this._add_(e);
         }
-      });
+      }, this);
 
-    } else if (!self.foundElt(elts)) {
-      self._add_(elts);
+    } else if (!this.foundElt(elts)) {
+      this._add_(elts);
     }
 
     return this;
