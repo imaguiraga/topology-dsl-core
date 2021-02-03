@@ -42,7 +42,7 @@ export class TerminalResource {
     this._start = null;
     this._finish = null;
 
-    this.data = new Map();
+    this.data = {};
     this.link = null;
     this.name = this.id;
     this.title = this.id;
@@ -288,12 +288,12 @@ export class TerminalResource {
   }
 
   _set_(key, value) {
-    this.data.set(key, value);
+    this.data[key] = value;
     return this;
   }
 
   _get_(key) {
-    return this.data.get(key);
+    return this.data[key];
   }
 
   _link_(value) {
