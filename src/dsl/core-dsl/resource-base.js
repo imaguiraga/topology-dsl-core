@@ -61,23 +61,23 @@ export class TerminalResource {
 
   }
 
-  top() {
-    this.direction = 'TOP';
+  _up_() {
+    this.direction = 'UP';
     return this;
   }
 
-  down() {
+  _down_() {
     this.direction = 'DOWN';
     return this;
   }
 
-  left() {
+  _left_() {
     this.direction = 'LEFT';
     return this;
   }
 
-  right() {
-    this.direction = 'right';
+  _right_() {
+    this.direction = 'RIGHT';
     return this;
   }
 
