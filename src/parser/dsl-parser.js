@@ -11,14 +11,17 @@ require('systemjs/dist/extras/named-register.js');
 //var escodegen = require('escodegen');
 //import * as escodegen from 'escodegen';
 import * as esprima from 'esprima';
-import { getSupportedCodeFixes } from 'typescript';
 import * as model from '../dsl';
 
 const {
   jsonToDslObject
 } = model;
 
-const DEBUG = true;
+let DEBUG = true;
+
+export function debugOn(v = true) {
+  DEBUG = v;
+}
 
 function debug(msg) {
   if (DEBUG) {
@@ -144,13 +147,17 @@ function isScript(source) {
 }
 // To resolve relative urls
 const IMPORT_ID = location.href + 'IMPORT.js';
-export function parseDslModule(source, dslModule) {
+export function parseDslModule(source, dslModule, moduleId = IMPORT_ID, loadFromCache = false) {
   let importPromise = null;
-  if (isScript(source)) {
-    importPromise = importURL(IMPORT_ID, source);
-
+  if (loadFromCache && System.has(moduleId)) {
+    importPromise = Promise.resolve(System.registerRegistry[moduleId]);
   } else {
-    importPromise = importSource(IMPORT_ID, source);
+    if (isScript(source)) {
+      importPromise = importURL(moduleId, source);
+      
+    } else {
+      importPromise = importSource(moduleId, source);
+    }
   }
 
   // Convert exports to map
@@ -212,7 +219,7 @@ function importSource(id, source) {
   return System.import(id);
 }
 
-function importURL(url) {
+function importURL(id,url) {
   debug('importURL -> ' + url);
   if (System.has(url)) {
     System.delete(url);
