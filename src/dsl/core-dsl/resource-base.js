@@ -91,9 +91,9 @@ export class TerminalResource {
     callbackFn(self, i, arr, thisArg);
     self.forEach((v, n, a) => {
       if (v.preorder) {
-        v.preorder(callbackFn, n, a, self);
+        v.preorder(callbackFn, n, a, thisArg);
       }
-    }, self);
+    }, thisArg);
 
   }
 
@@ -106,9 +106,9 @@ export class TerminalResource {
     let self = this;
     self.forEach((v, n, a) => {
       if (v.postorder) {
-        v.postorder(callbackFn, n, a, self);
+        v.postorder(callbackFn, n, a, thisArg);
       }
-    }, self);
+    }, thisArg);
     callbackFn(self, i, arr, thisArg);
   }
 
@@ -118,7 +118,7 @@ export class TerminalResource {
    * @param {Object} thisArg  An object to which the this keyword can refer in the callbackfn function. If thisArg is omitted, undefined is used as the this value.
    */
   forEach(callbackFn, thisArg) {
-    this.elts.forEach(callbackFn, thisArg);
+    (this.elts || []).forEach(callbackFn, thisArg);
   }
 
   /**
@@ -128,7 +128,7 @@ export class TerminalResource {
    * @returns {U[]}
    */
   map(callbackFn, thisArg) {
-    return this.elts.map(callbackFn, thisArg);
+    return (this.elts || []).map(callbackFn, thisArg);
   }
 
   /**
@@ -139,7 +139,7 @@ export class TerminalResource {
    */
   filter(predicateFn, thisArg) {
     // Filter children
-    return this.elts.filter(predicateFn, thisArg);
+    return (this.elts || []).filter(predicateFn, thisArg);
 
   }
 
@@ -334,7 +334,7 @@ export class TerminalResource {
         if (r != null) {
           this.outputElts.push(r);
         }
-      },this);
+      }, this);
 
     } else {
       let r = this.toElt(elts);
