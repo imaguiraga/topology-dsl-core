@@ -145,8 +145,13 @@ export function zeroOrMore(elt) {
  * @param {object} elt - The element.
  * @return {object} resource dsl.
  */
-export function resource(elt) {
-  return terminal(elt)._subType_('resource')._set_('style', BASE_ICONS_MAP.get('resource'));
+export function resource(...elt) {
+  if(elt.length >1) {
+    return group(...elt);
+  } else {
+    return terminal(elt[0])._subType_('resource')._set_('style', BASE_ICONS_MAP.get('resource'));
+  }
+  
 }
 
 /**

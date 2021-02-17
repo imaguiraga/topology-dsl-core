@@ -196,7 +196,7 @@ export class TerminalResource {
   resolveElt(elt) {
     // Only accept primitive types as Terminal Element 
     let result = null;
-    if (typeof elt !== 'undefined') {
+    if (elt !== undefined) {
       try {
         if (typeof elt === 'function') {
           result = elt.call();
