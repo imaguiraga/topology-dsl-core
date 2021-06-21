@@ -1,68 +1,69 @@
 import {
-  CompositeResource,
-  TerminalResource
+  CompositeResourceElt,
+  ResourceElt
 } from './resource-base.js';
 
-export const DEFAULT_TAG = 'flow';
+export const WORKFLOW_KIND = 'workflow';
+export const WORKFLOW_PROVIDER = 'default';
 
 /**
  * Class FanInFanOutElt.
- * @extends CompositeResource
+ * @extends CompositeResourceElt
  */
-export class FanOutFanInElt extends CompositeResource {
+export class FanOutFanInElt extends CompositeResourceElt {
   /**
    * Create a FanOutFanInElt.
    * @param {object} elts - The elts value.
    */
   constructor(elts) {
-    super(elts, 'fanOut_fanIn', DEFAULT_TAG, 'default');
+    super(elts, 'fanOut_fanIn', 'fanOut_fanIn', WORKFLOW_PROVIDER);
   }
 
 }
 
 /**
  * Class FanInElt.
- * @extends CompositeResource
+ * @extends CompositeResourceElt
  */
-export class FanInElt extends CompositeResource {
+export class FanInElt extends CompositeResourceElt {
   /**
    * Create a FanInElt.
    * @param {object} elts - The elts value.
    */
   constructor(elts) {
-    super(elts, 'fanIn', DEFAULT_TAG, 'default');
+    super(elts, 'fanIn', 'fanIn', WORKFLOW_PROVIDER);
   }
 
 }
 
 /**
  * Class FanOutElt.
- * @extends CompositeResource
+ * @extends CompositeResourceElt
  */
-export class FanOutElt extends CompositeResource {
+export class FanOutElt extends CompositeResourceElt {
   /**
    * Create a FanOutElt.
    * @param {object} elts - The elts value.
    */
   constructor(elts) {
-    super(elts, 'fanOut', DEFAULT_TAG, 'default');
+    super(elts, 'fanOut', 'fanOut', WORKFLOW_PROVIDER);
   }
 
 }
 
 /**
  * Class OptionalElt.
- * @extends CompositeResource
+ * @extends CompositeResourceElt
  */
-export class OptionalElt extends CompositeResource {
+export class OptionalElt extends CompositeResourceElt {
   /**
    * Create a OptionalElt.
    * @param {object} elts - The elts value.
    */
   constructor(elts) {
-    super(elts, 'optional', DEFAULT_TAG, 'default');
+    super(elts, 'optional', 'optional', WORKFLOW_PROVIDER);
     // skip node
-    this.skip = (new TerminalResource('skip', 'terminal', 'mark', this.provider))._subType_('skip');
+    this.skip = (new ResourceElt('skip', 'resource', 'mark', this.provider))._tagName_('skip');
   }
 
   _add_(elt) {
@@ -77,17 +78,17 @@ export class OptionalElt extends CompositeResource {
 
 /**
  * Class RepeatElt.
- * @extends CompositeResource
+ * @extends CompositeResourceElt
  */
-export class RepeatElt extends CompositeResource {
+export class RepeatElt extends CompositeResourceElt {
   /**
    * Create a RepeatElt.
    * @param {object} elts - The elts value.
    */
   constructor(elts) {
-    super(elts, 'repeat', DEFAULT_TAG, 'default');
+    super(elts, 'repeat', 'repeat', WORKFLOW_PROVIDER);
     // loop node
-    this.loop = (new TerminalResource('loop', 'terminal', 'mark', this.provider))._subType_('repeat');
+    this.loop = (new ResourceElt('loop', 'resource', 'mark', this.provider))._tagName_('repeat');
   }
 
   _add_(elt) {
@@ -102,15 +103,15 @@ export class RepeatElt extends CompositeResource {
 
 /**
  * Class SequenceElt.
- * @extends CompositeResource
+ * @extends CompositeResourceElt
  */
-export class SequenceElt extends CompositeResource {
+export class SequenceElt extends CompositeResourceElt {
   /**
    * Create a SequenceElt.
    * @param {object} elts - The elts value.
    */
   constructor(elts) {
-    super(elts, 'sequence', DEFAULT_TAG, 'default');
+    super(elts, 'sequence', 'sequence', WORKFLOW_PROVIDER);
   }
 
 }
@@ -118,29 +119,29 @@ export class SequenceElt extends CompositeResource {
 /**
  * Class TerminalElt.
  */
-export class TerminalElt extends TerminalResource {
+export class TerminalElt extends ResourceElt {
 
   /**
    * Create a TerminalElt.
    * @param {object} elt - The elt value.
    */
   constructor(elt) {
-    super(elt, 'terminal', DEFAULT_TAG, 'default');
+    super(elt, 'resource', 'resource', WORKFLOW_PROVIDER);
   }
 
 }
 
 /**
  * Class GroupElt.
- * @extends CompositeResource
+ * @extends CompositeResourceElt
  */
-export class GroupElt extends CompositeResource {
+export class GroupElt extends CompositeResourceElt {
   /**
    * Create a SequenceElt.
    * @param {object} elts - The elts value.
    */
   constructor(elts) {
-    super(elts, 'group', 'container', 'default');
+    super(elts, 'group', 'group', WORKFLOW_PROVIDER);
   }
 
 }

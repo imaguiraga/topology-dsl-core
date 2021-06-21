@@ -21,7 +21,7 @@ export function fanOut_fanIn(...elts) {
 }
 
 export function choice(...elts) {
-  return fanOut_fanIn(...elts)._subType_('choice')._set_('style', BASE_ICONS_MAP.get('choice'));
+  return fanOut_fanIn(...elts)._tagName_('choice')._set_('style', BASE_ICONS_MAP.get('choice'));
 }
 
 /**
@@ -34,7 +34,7 @@ export function fanIn(...elts) {
 }
 
 export function merge(...elts) {
-  return fanIn(...elts)._subType_('merge')._set_('style', BASE_ICONS_MAP.get('merge'));
+  return fanIn(...elts)._tagName_('fanIn')._set_('style', BASE_ICONS_MAP.get('merge'));
 }
 
 /**
@@ -47,27 +47,27 @@ export function fanOut(...elts) {
 }
 
 export function branch(...elts) {
-  return fanOut(...elts)._subType_('branch')._set_('style', BASE_ICONS_MAP.get('branch'));
+  return fanOut(...elts)._tagName_('branch')._set_('style', BASE_ICONS_MAP.get('branch'));
 }
 
 export function split(...elts) {
-  return fanOut(...elts)._subType_('split')._set_('style', BASE_ICONS_MAP.get('split'));
+  return fanOut(...elts)._tagName_('split')._set_('style', BASE_ICONS_MAP.get('split'));
 }
 
 export function tree(...elts) {
-  return fanOut(...elts)._subType_('tree')._set_('style', BASE_ICONS_MAP.get('tree'));
+  return fanOut(...elts)._tagName_('tree')._set_('style', BASE_ICONS_MAP.get('tree'));
 }
 
 export function link(...elts) {
-  return fanOut(...elts)._subType_('link')._set_('style', BASE_ICONS_MAP.get('link'));
+  return fanOut(...elts)._tagName_('link')._set_('style', BASE_ICONS_MAP.get('link'));
 }
 
 export function use(...elts) {
-  return fanOut(...elts)._subType_('use')._set_('style', BASE_ICONS_MAP.get('use'));
+  return fanOut(...elts)._tagName_('use')._set_('style', BASE_ICONS_MAP.get('use'));
 }
 
 export function parallel(...elts) {
-  return fanOut(...elts)._subType_('parallel')._set_('style', BASE_ICONS_MAP.get('parallel'));
+  return fanOut(...elts)._tagName_('parallel')._set_('style', BASE_ICONS_MAP.get('parallel'));
 }
 
 /**
@@ -102,11 +102,11 @@ export function sequence(...elts) {
 }
 
 export function process(...elts) {
-  return sequence(...elts)._subType_('process')._set_('style', BASE_ICONS_MAP.get('process'));
+  return sequence(...elts)._tagName_('process')._set_('style', BASE_ICONS_MAP.get('process'));
 }
 
 export function activity(...elts) {
-  return sequence(...elts)._subType_('activity')._set_('style', BASE_ICONS_MAP.get('activity'));
+  return sequence(...elts)._tagName_('activity')._set_('style', BASE_ICONS_MAP.get('activity'));
 }
 
 /**
@@ -115,11 +115,11 @@ export function activity(...elts) {
  * @return {object} flow dsl.
  */
 export function terminal(elt) {
-  return new TerminalElt(elt)._set_('style', BASE_ICONS_MAP.get('terminal'));
+  return new TerminalElt(elt)._set_('style', BASE_ICONS_MAP.get('resource'));
 }
 
 export function transition(elt) {
-  return terminal(elt)._subType_('transition')._set_('style', BASE_ICONS_MAP.get('transition'));
+  return terminal(elt)._tagName_('transition')._set_('style', BASE_ICONS_MAP.get('transition'));
 }
 
 /**
@@ -128,7 +128,7 @@ export function transition(elt) {
  * @return {object} flow dsl.
  */
 export function state(elt) {
-  return terminal(elt)._subType_('state')._set_('style', BASE_ICONS_MAP.get('state'));
+  return terminal(elt)._tagName_('state')._set_('style', BASE_ICONS_MAP.get('state'));
 }
 
 /**
@@ -149,7 +149,7 @@ export function resource(...elt) {
   if(elt.length >1) {
     return group(...elt);
   } else {
-    return terminal(elt[0])._subType_('resource')._set_('style', BASE_ICONS_MAP.get('resource'));
+    return terminal(elt[0])._tagName_('resource')._set_('style', BASE_ICONS_MAP.get('resource'));
   }
   
 }
@@ -161,6 +161,15 @@ export function resource(...elt) {
  */
 export function group(...elts) {
   return new GroupElt([...elts])._set_('style', BASE_ICONS_MAP.get('group'));
+}
+
+/**
+ * Create a block dsl tree.
+ * @param {object} elts - The elements.
+ * @return {object} group dsl.
+ */
+ export function block(...elts) {
+  return group(...elt)._tagName_('block')._set_('style', BASE_ICONS_MAP.get('group'));
 }
 
 // pipeline -> stages -> jobs -> tasks -> steps 
