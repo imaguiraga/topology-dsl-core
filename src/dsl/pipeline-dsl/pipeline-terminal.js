@@ -1,12 +1,12 @@
 import {
-  TerminalResource
+  ResourceElt
 } from '../core-dsl';
 
 export const PIPELINE_RESOURCE_TYPE = 'pipeline';
 /**
  * Class StepPipelineElt.
  */
-export class StepPipelineElt extends TerminalResource {
+export class StepPipelineElt extends ResourceElt {
 
   /**
    * Create a StepPipelineElt.
@@ -23,7 +23,7 @@ export class StepPipelineElt extends TerminalResource {
 /**
  * Class DataPipelineElt.
  */
-export class DataPipelineElt extends TerminalResource {
+export class DataPipelineElt extends ResourceElt {
 
   /**
    * Create a DataPipelineElt.

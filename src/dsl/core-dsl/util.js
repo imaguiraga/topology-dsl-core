@@ -1,6 +1,6 @@
 import {
-  TerminalResource,
-  CompositeResource
+  ResourceElt,
+  CompositeResourceElt
 } from './resource-base.js';
 
 export function isContainer(n) {
@@ -79,9 +79,9 @@ export function jsonToDslObject(o) {
   let result = o;
   if (o.start === undefined) {
     if (o.compound) {
-      Object.setPrototypeOf(o, CompositeResource.prototype);
+      Object.setPrototypeOf(o, CompositeResourceElt.prototype);
     } else {
-      Object.setPrototypeOf(o, TerminalResource.prototype);
+      Object.setPrototypeOf(o, ResourceElt.prototype);
     }
     if (Array.isArray(result.elts)) {
       // Recursively enrich elts

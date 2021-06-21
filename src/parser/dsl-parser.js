@@ -55,8 +55,7 @@ systemJSPrototype.transform = function (_id, source) {
   return source;
 };
 
-// Re-export topology-dsl-core
-
+// Re-export a module with a new id
 export function registerJSModule(id, _module_) {
   const exportsFn = function (exports_1) {
     'use strict';
@@ -145,42 +144,6 @@ function isScript(source) {
     source.endsWith('.tsx')
   );
 }
-// To resolve relative urls
-const IMPORT_ID = location.href + 'IMPORT.js';
-export function parseDslModule(source, dslModule, moduleId = IMPORT_ID, loadFromCache = false) {
-  let importPromise = null;
-  if (loadFromCache && System.has(moduleId)) {
-    importPromise = Promise.resolve(System.registerRegistry[moduleId]);
-  } else {
-    if (isScript(source)) {
-      importPromise = importURL(moduleId, source);
-      
-    } else {
-      importPromise = importSource(moduleId, source);
-    }
-  }
-
-  // Convert exports to map
-  if (importPromise != null) {
-    return importPromise.then((modules) => {
-      let variables = new Map();
-      for (let key in modules) {
-        // Exclude module specific properties
-        if (key !== 'default' && !key.startsWith('_')) {
-          // Extract only subclasses of TerminalResource
-          if (modules[key] instanceof model.TerminalResource) {
-            variables.set(key, modules[key]);
-          }
-        }
-      }
-      return variables;
-    });
-
-  } else {
-    return Promise.resolve(new Map());
-  }
-
-}
 
 function importSource(id, source) {
   // https://github.com/Microsoft/TypeScript/wiki/Using-the-Compiler-API
@@ -219,7 +182,7 @@ function importSource(id, source) {
   return System.import(id);
 }
 
-function importURL(id,url) {
+function importURL(id, url) {
   debug('importURL -> ' + url);
   if (System.has(url)) {
     System.delete(url);
@@ -275,5 +238,44 @@ export function resolveImports(input) {
   });
 
   return result;
+}
+
+// MODULE RESOLVER
+const IMPORT_ID = location.href + 'IMPORT.js';
+export function parseDslModule(source, dslModule, moduleId = IMPORT_ID, loadFromCache = false) {
+  let importPromise = null;
+  if (loadFromCache && System.has(moduleId)) {
+    importPromise = Promise.resolve(System.registerRegistry[moduleId]);
+  } else {
+    // Import URL
+    if (isScript(source)) {
+      importPromise = importURL(moduleId, source);
+
+    } else {
+      // Import text content
+      importPromise = importSource(moduleId, source);
+    }
+  }
+
+  // Convert exports to map
+  if (importPromise != null) {
+    return importPromise.then((modules) => {
+      let variables = new Map();
+      // Convert resolved export keys to a map
+      for (let key in modules) {
+        // Exclude module specific properties
+        if (key !== 'default' && !key.startsWith('_')) {
+          // Extract only subclasses of ResourceElt
+          if (modules[key] instanceof model.ResourceElt) {
+            variables.set(key, modules[key]);
+          }
+        }
+      }
+      return variables;
+    });
+
+  } else {
+    return Promise.resolve(new Map());
+  }
 
 }

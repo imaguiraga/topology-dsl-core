@@ -13,26 +13,25 @@ function* idGenFn(prefix, index) {
 export const NODEIDGENFN = idGenFn('node.', 0);
 
 /**
- * Class TerminalResource.
+ * Class ResourceElt.
  */
-export class TerminalResource {
+export class ResourceElt {
   /**
-   * Create a TerminalResource.
+   * Create a ResourceElt.
    * @param {object} elts - The elts value.
-   * @param {string} resourceType - The resourceType value.
+   * @param {string} kind - The kind value.
    * @param {string} tagName - The tagName value.
    * @param {string} provider - The resource provider value.
    */
-  constructor(elts, resourceType, tagName, provider) {
+  constructor(elts, kind, tagName, provider) {
     // Nex Id Generator
     this.idGenIt = NODEIDGENFN;
     this.title = 'title';
 
     //get new id
-    this.resourceType = resourceType || 'terminal';
-    this.subType = this.resourceType;// use for extending the resource
+    this.kind = kind || 'resource';
     this.tagName = tagName || 'resource';
-    this.id = this.subType + '.' + this.idGenIt.next().value;
+    this.id = this.tagName + '.' + this.idGenIt.next().value;
     this.provider = provider;
     this.compound = false;
 
@@ -146,8 +145,7 @@ export class TerminalResource {
   get start() {
     if (this._start == null) {
       this._start = {
-        resourceType: this.resourceType,
-        subType: this.subType,
+        kind: this.kind,       
         tagName: this.tagName,
         id: this.id + '.start',
         provider: this.provider,
@@ -167,8 +165,7 @@ export class TerminalResource {
   get finish() {
     if (this._finish == null) {
       this._finish = {
-        resourceType: this.resourceType,
-        subType: this.subType,
+        kind: this.kind,
         tagName: this.tagName,
         id: this.id + '.finish',
         provider: this.provider,
@@ -190,13 +187,13 @@ export class TerminalResource {
   }
 
   isGroup() {
-    return (this.resourceType === 'group');
+    return (this.kind === 'group');
   }
 
   resolveElt(elt) {
     // Only accept primitive types as Terminal Element 
     let result = null;
-    if (typeof elt !== 'undefined') {
+    if (elt !== undefined) {
       try {
         if (typeof elt === 'function') {
           result = elt.call();
@@ -223,7 +220,7 @@ export class TerminalResource {
       return elt.call();
     } else if (typeof elt !== 'object') {
       // very likely a primitive type
-      return new TerminalResource(elt, 'terminal', 'resource', this.provider);
+      return new ResourceElt(elt, 'resource', 'resource', this.provider);
     }
     // default to object
     return elt;
@@ -261,12 +258,12 @@ export class TerminalResource {
     return this;
   }
 
-  _subType_(value) {
+  _tagName_(value) {
     if (value) {
-      this.subType = value;
-      // Replace prefix with subType
+      this.tagName = value;
+      // Replace prefix with tagName
       let tmp = this.id.split('\.');
-      tmp[0] = this.subType;
+      tmp[0] = this.tagName;
       this.id = tmp.join('.');
     }
     return this;
@@ -357,25 +354,25 @@ export class TerminalResource {
 
 
 /**
- * Class CompositeResource.
- * @extends TerminalResource
+ * Class CompositeResourceElt.
+ * @extends ResourceElt
  */
-export class CompositeResource extends TerminalResource {
+export class CompositeResourceElt extends ResourceElt {
   /**
-   * Create a CompositeResource.
+   * Create a CompositeResourceElt.
    * @param {object} elts - The elts value.
-   * @param {string} resourceType - The resourceType value.
+   * @param {string} kind - The kind value.
    * @param {string} tagName - The tagName value.
    * @param {string} provider - The resource provider value.
    */
-  constructor(elts, resourceType, tagName, provider) {
-    super(elts, resourceType, tagName, provider);
+  constructor(elts, kind, tagName, provider) {
+    super(elts, kind, tagName, provider);
     this.elts = [];
     this.title = null;
     this._start = null;
     this._finish = null;
-    //this.start = new TerminalResource('start', 'terminal', 'mark', provider);
-    //this.finish = new TerminalResource('finish', 'terminal', 'mark', provider);
+    //this.start = new ResourceElt('start', 'resource', 'mark', provider);
+    //this.finish = new ResourceElt('finish', 'resource', 'mark', provider);
     this.compound = true;
 
     if (Array.isArray(elts)) {
