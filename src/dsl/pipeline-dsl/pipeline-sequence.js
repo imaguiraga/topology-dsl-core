@@ -1,14 +1,14 @@
 import {
-  CompositeResource
+  CompositeResourceElt
 } from '../core-dsl';
 
 import { PIPELINE_RESOURCE_TYPE } from './pipeline-terminal.js';
 
 /**
  * Class PipelineElt.
- * @extends CompositeResource
+ * @extends CompositeResourceElt
  */
-export class PipelineElt extends CompositeResource {
+export class PipelineElt extends CompositeResourceElt {
   /**
    * Create a PipelineElt.
    * @param {object} elts - The elts value.
@@ -31,9 +31,9 @@ export function pipeline(...elts) {
 
 /**
  * Class JobElt.
- * @extends CompositeResource
+ * @extends CompositeResourceElt
  */
-export class JobElt extends CompositeResource {
+export class JobElt extends CompositeResourceElt {
   /**
    * Create a JobElt.
    * @param {object} elts - The elts value.
@@ -56,9 +56,9 @@ export function job(...elts) {
 
 /**
  * Class StageElt.
- * @extends CompositeResource
+ * @extends CompositeResourceElt
  */
-export class StageElt extends CompositeResource {
+export class StageElt extends CompositeResourceElt {
   /**
    * Create a StageElt.
    * @param {object} elts - The elts value.
