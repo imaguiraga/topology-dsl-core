@@ -7,6 +7,21 @@ export const WORKFLOW_KIND = 'workflow';
 export const WORKFLOW_PROVIDER = 'default';
 
 /**
+ * Class GroupElt.
+ * @extends CompositeResourceElt
+ */
+ export class GroupElt extends CompositeResourceElt {
+  /**
+   * Create a SequenceElt.
+   * @param {object} elts - The elts value.
+   */
+  constructor(elts) {
+    super(elts, 'group', 'group', WORKFLOW_PROVIDER);
+  }
+
+}
+
+/**
  * Class FanInFanOutElt.
  * @extends CompositeResourceElt
  */
@@ -127,21 +142,6 @@ export class TerminalElt extends ResourceElt {
    */
   constructor(elt) {
     super(elt, 'resource', 'resource', WORKFLOW_PROVIDER);
-  }
-
-}
-
-/**
- * Class GroupElt.
- * @extends CompositeResourceElt
- */
-export class GroupElt extends CompositeResourceElt {
-  /**
-   * Create a SequenceElt.
-   * @param {object} elts - The elts value.
-   */
-  constructor(elts) {
-    super(elts, 'group', 'group', WORKFLOW_PROVIDER);
   }
 
 }
