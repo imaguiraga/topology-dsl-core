@@ -10,7 +10,7 @@ export const WORKFLOW_PROVIDER = 'default';
  * Class GroupElt.
  * @extends CompositeResourceElt
  */
- export class GroupElt extends CompositeResourceElt {
+export class GroupElt extends CompositeResourceElt {
   /**
    * Create a SequenceElt.
    * @param {object} elts - The elts value.
