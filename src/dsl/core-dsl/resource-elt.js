@@ -77,8 +77,6 @@ export class OptionalElt extends CompositeResourceElt {
    */
   constructor(elts) {
     super(elts, 'optional', 'optional', WORKFLOW_PROVIDER);
-    // skip node
-    this.skip = (new ResourceElt('skip', 'resource', 'mark', this.provider));
   }
 
   _add_(elt) {
@@ -102,8 +100,6 @@ export class RepeatElt extends CompositeResourceElt {
    */
   constructor(elts) {
     super(elts, 'repeat', 'repeat', WORKFLOW_PROVIDER);
-    // loop node
-    this.loop = (new ResourceElt('loop', 'resource', 'mark', this.provider));
   }
 
   _add_(elt) {
