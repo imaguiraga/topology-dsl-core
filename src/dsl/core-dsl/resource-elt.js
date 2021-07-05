@@ -6,6 +6,7 @@ import {
 export const WORKFLOW_KIND = 'workflow';
 export const WORKFLOW_PROVIDER = 'default';
 
+const GROUP = 'group';
 /**
  * Class GroupElt.
  * @extends CompositeResourceElt
@@ -16,11 +17,12 @@ export class GroupElt extends CompositeResourceElt {
    * @param {object} elts - The elts value.
    */
   constructor(elts) {
-    super(elts, 'group', 'group', WORKFLOW_PROVIDER);
+    super(elts, GROUP, GROUP, WORKFLOW_PROVIDER);
   }
 
 }
 
+const FANOUT_FANIN = 'fanOut_fanIn';
 /**
  * Class FanInFanOutElt.
  * @extends CompositeResourceElt
@@ -31,11 +33,12 @@ export class FanOutFanInElt extends CompositeResourceElt {
    * @param {object} elts - The elts value.
    */
   constructor(elts) {
-    super(elts, 'fanOut_fanIn', 'fanOut_fanIn', WORKFLOW_PROVIDER);
+    super(elts, FANOUT_FANIN, FANOUT_FANIN, WORKFLOW_PROVIDER);
   }
 
 }
 
+const FANIN = 'fanIn';
 /**
  * Class FanInElt.
  * @extends CompositeResourceElt
@@ -46,11 +49,12 @@ export class FanInElt extends CompositeResourceElt {
    * @param {object} elts - The elts value.
    */
   constructor(elts) {
-    super(elts, 'fanIn', 'fanIn', WORKFLOW_PROVIDER);
+    super(elts, FANIN, FANIN, WORKFLOW_PROVIDER);
   }
 
 }
 
+const FANOUT = 'fanOut';
 /**
  * Class FanOutElt.
  * @extends CompositeResourceElt
@@ -61,11 +65,12 @@ export class FanOutElt extends CompositeResourceElt {
    * @param {object} elts - The elts value.
    */
   constructor(elts) {
-    super(elts, 'fanOut', 'fanOut', WORKFLOW_PROVIDER);
+    super(elts, FANOUT, FANOUT, WORKFLOW_PROVIDER);
   }
 
 }
 
+const OPTIONAL = 'optional';
 /**
  * Class OptionalElt.
  * @extends CompositeResourceElt
@@ -76,7 +81,7 @@ export class OptionalElt extends CompositeResourceElt {
    * @param {object} elts - The elts value.
    */
   constructor(elts) {
-    super(elts, 'optional', 'optional', WORKFLOW_PROVIDER);
+    super(elts, OPTIONAL, OPTIONAL, WORKFLOW_PROVIDER);
   }
 
   _add_(elt) {
@@ -89,6 +94,7 @@ export class OptionalElt extends CompositeResourceElt {
   }
 }
 
+const REPEAT = 'repeat';
 /**
  * Class RepeatElt.
  * @extends CompositeResourceElt
@@ -99,7 +105,7 @@ export class RepeatElt extends CompositeResourceElt {
    * @param {object} elts - The elts value.
    */
   constructor(elts) {
-    super(elts, 'repeat', 'repeat', WORKFLOW_PROVIDER);
+    super(elts, REPEAT, REPEAT, WORKFLOW_PROVIDER);
   }
 
   _add_(elt) {
@@ -112,6 +118,7 @@ export class RepeatElt extends CompositeResourceElt {
   }
 }
 
+const SEQUENCE = 'sequence';
 /**
  * Class SequenceElt.
  * @extends CompositeResourceElt
@@ -122,11 +129,12 @@ export class SequenceElt extends CompositeResourceElt {
    * @param {object} elts - The elts value.
    */
   constructor(elts) {
-    super(elts, 'sequence', 'sequence', WORKFLOW_PROVIDER);
+    super(elts, SEQUENCE, SEQUENCE, WORKFLOW_PROVIDER);
   }
 
 }
 
+const RESOURCE = 'resource';
 /**
  * Class TerminalElt.
  */
@@ -137,7 +145,7 @@ export class TerminalElt extends ResourceElt {
    * @param {object} elt - The elt value.
    */
   constructor(elt) {
-    super(elt, 'resource', 'resource', WORKFLOW_PROVIDER);
+    super(elt, RESOURCE, RESOURCE, WORKFLOW_PROVIDER);
   }
 
 }
