@@ -42,14 +42,10 @@ export class ResourceElt {
     this._finish = null;
 
     this.data = {};
-    this.link = null;
     this.name = this.id;
     this.title = this.id;
 
     this.elts = [];
-    // Support for dataflow with input and output bindings
-    this.inputElts = [];
-    this.outputElts = [];
 
     let r = this.resolveElt(elts);
     if (r !== null) {
@@ -81,71 +77,17 @@ export class ResourceElt {
   }
 
   /**
-   * Performs preorder traversal.
-   * @param {(value: T, index: number, array: T[], thisArg: any) => void} callbackFn  A function that accepts up to three arguments. forEach calls the callbackfn function one time for each element in the array.
-   * @param {Object} thisArg  An object to which the this keyword can refer in the callbackfn function. If thisArg is omitted, undefined is used as the this value.
-   */
-  preorder(callbackFn, i = -1, arr = [], thisArg = undefined) {
-    let self = this;
-    callbackFn(self, i, arr, thisArg);
-    self.forEach((v, n, a) => {
-      if (v.preorder) {
-        v.preorder(callbackFn, n, a, thisArg);
-      }
-    }, thisArg);
-
-  }
-
-  /**
-  * Performs postorder traversal.
-  * @param {(value: T, index: number, array: T[], thisArg: any)) => void} callbackFn  A function that accepts up to three arguments. forEach calls the callbackfn function one time for each element in the array.
-  * @param {Object} thisArg  An object to which the this keyword can refer in the callbackfn function. If thisArg is omitted, undefined is used as the this value.
-  */
-  postorder(callbackFn, i = -1, arr = [], thisArg = undefined) {
-    let self = this;
-    self.forEach((v, n, a) => {
-      if (v.postorder) {
-        v.postorder(callbackFn, n, a, thisArg);
-      }
-    }, thisArg);
-    callbackFn(self, i, arr, thisArg);
-  }
-
-  /**
-   * Performs the specified action for each element in an array.
-   * @param {(value: T, index: number, array: T[]) => void} callbackFn  A function that accepts up to three arguments. forEach calls the callbackfn function one time for each element in the array.
-   * @param {Object} thisArg  An object to which the this keyword can refer in the callbackfn function. If thisArg is omitted, undefined is used as the this value.
-   */
-  forEach(callbackFn, thisArg) {
-    (this.elts || []).forEach(callbackFn, thisArg);
-  }
-
-  /**
    * Calls a defined callback function on each element of an array, and returns an array that contains the results.
    * @param {(value: T, index: number, array: T[]) => U} callbackFn A function that accepts up to three arguments. The map method calls the callbackfn function one time for each element in the array.
    * @param {Object} thisArg An object to which the this keyword can refer in the callbackfn function. If thisArg is omitted, undefined is used as the this value.
    * @returns {U[]}
    */
-  map(callbackFn, thisArg) {
-    return (this.elts || []).map(callbackFn, thisArg);
-  }
 
-  /**
-   * Returns the elements of an array that meet the condition specified in a callback function.
-   * @param {(value: T, index: number, array: T[]) => unknown} predicateFn A function that accepts up to three arguments. The filter method calls the predicate function one time for each element in the array.
-   * @param {Object} thisArg An object to which the this keyword can refer in the predicate function. If thisArg is omitted, undefined is used as the this value.
-   * @returns {T[]}
-   */
-  filter(predicateFn, thisArg) {
-    // Filter children
-    return (this.elts || []).filter(predicateFn, thisArg);
-
-  }
 
   get start() {
     if (this._start == null) {
       this._start = {
-        kind: this.kind,       
+        kind: this.kind,
         tagName: this.tagName,
         id: this.id + '.start',
         provider: this.provider,
@@ -197,9 +139,9 @@ export class ResourceElt {
       try {
         if (typeof elt === 'function') {
           result = elt.call();
-        }
+        } 
 
-        if (typeof result === 'object') {
+        if (typeof result === 'object' && elt instanceof ResourceElt) {
           // Allow complex element as terminal
           result = elt;
 
@@ -216,14 +158,42 @@ export class ResourceElt {
   }
 
   toElt(elt) {
-    if (typeof elt === 'function') {
-      return elt.call();
-    } else if (typeof elt !== 'object') {
-      // very likely a primitive type
-      return new ResourceElt(elt, 'resource', 'resource', this.provider);
+    let result = null;
+    if (elt !== undefined && elt !== null) {
+      result = elt;
+      if (result instanceof ResourceElt) {
+        return result;
+      } else {
+        try {
+          if (typeof elt === 'function') {
+            result = elt.call();
+          } 
+
+          if (result instanceof ResourceElt) {
+            return result;
+          } else if (typeof result === 'object') {
+            // Allow complex element as terminal
+            if (Array.isArray(elt)) {
+              result = elt.map(
+                (el) => { return this.toElt(el); }, this
+              ).filter((el) => { return el != null; }, this);
+
+            } else {
+              result = this.toElt(elt);
+            }
+
+          } else {
+            // very likely a primitive type
+            result = new ResourceElt(elt, 'resource', 'resource', this.provider);
+          }
+
+        } catch (err) {
+          console.error(err.message + ' - ' + err);
+        }
+      }
     }
     // default to object
-    return elt;
+    return result;
   }
 
   foundElt(elt) {
@@ -244,17 +214,6 @@ export class ResourceElt {
       this.elts.push(r);
     }
 
-    return this;
-  }
-
-  _require_(elt) {
-    let e = this.toElt(elt);
-    // Add self to group elt
-    if (e.isGroup()) {
-      e._add_(this);
-    } else {
-      this._add_(elt);
-    }
     return this;
   }
 
@@ -293,63 +252,16 @@ export class ResourceElt {
     return this.data[key];
   }
 
-  _link_(value) {
-    this.link = value;
-    return this;
-  }
-
-  // Add a reference 
-  _ref_(elt) {
-    return this._add_(elt);
-  }
-
   // Inbound bindings
   _in_(...elts) {
-    if (Array.isArray(elts)) {
-      elts.forEach((e) => {
-        let r = this.toElt(e);
-        if (r != null) {
-          this.inputElts.push(r);
-        }
-      }, this);
-
-    } else {
-      let r = this.toElt(elts);
-      if (r != null) {
-        this.inputElts.push(r);
-      }
-    }
-
     return this;
   }
 
   // Outbound bindings
   _out_(...elts) {
-    if (Array.isArray(elts)) {
-      elts.forEach((e) => {
-        let r = this.toElt(e);
-        if (r != null) {
-          this.outputElts.push(r);
-        }
-      }, this);
-
-    } else {
-      let r = this.toElt(elts);
-      if (r != null) {
-        this.outputElts.push(r);
-      }
-    }
-
     return this;
   }
 
-  _from_(...elts) {
-    return this._in_(...elts);
-  }
-
-  _to_(...elts) {
-    return this._out_(...elts);
-  }
 }
 
 
@@ -375,21 +287,27 @@ export class CompositeResourceElt extends ResourceElt {
     //this.finish = new ResourceElt('finish', 'resource', 'mark', provider);
     this.compound = true;
 
+    this.elts = this.initElts(elts);
+
+    if (this.title === null) {
+      this.title = '' + this.id;
+    }
+  }
+
+  initElts(elts) {
+    let result = [];
     if (Array.isArray(elts)) {
-      this.elts = elts.map(
+      result = elts.map(
         (elt) => { return this.resolveElt(elt); }, this
       ).filter(e => { return e != null; }, this);
 
     } else {
       let r = this.resolveElt(elts);
       if (r != null) {
-        this.elts.push(r);
+        result.push(r);
       }
     }
-
-    if (this.title === null) {
-      this.title = '' + this.id;
-    }
+    return result;
   }
 
   isTerminal() {
@@ -418,22 +336,6 @@ export class CompositeResourceElt extends ResourceElt {
       if (r != null) {
         this.elts.push(r);
       }
-    }
-
-    return this;
-  }
-
-  // Add a reference if it doesn't exist
-  _ref_(...elts) {
-    if (Array.isArray(elts)) {
-      elts.forEach((e) => {
-        if (!this.foundElt(e)) {
-          this._add_(e);
-        }
-      }, this);
-
-    } else if (!this.foundElt(elts)) {
-      this._add_(elts);
     }
 
     return this;
