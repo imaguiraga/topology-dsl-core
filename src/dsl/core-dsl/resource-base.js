@@ -24,7 +24,7 @@ export class ResourceElt {
    * @param {string} provider - The resource provider value.
    */
   constructor(elts, kind, tagName, provider) {
-    // Nex Id Generator
+    // Next Id Generator
     this.idGenIt = NODEIDGENFN;
     this.title = 'title';
 
@@ -46,6 +46,8 @@ export class ResourceElt {
     this.title = this.id;
 
     this.elts = [];
+    this.eltsFrom = [];
+    this.eltsTo = [];
 
     let r = this.resolveElt(elts);
     if (r !== null) {
@@ -132,6 +134,26 @@ export class ResourceElt {
     return (this.kind === 'group');
   }
 
+  initElts(elts) {
+    let result = [];
+    if (elts === undefined || elts === null) {
+      return result;
+    }
+
+    if (Array.isArray(elts)) {
+      result = elts.map(
+        (elt) => { return this.resolveElt(elt); }, this
+      ).filter(e => { return e != null; }, this);
+
+    } else {
+      let r = this.resolveElt(elts);
+      if (r != null) {
+        result.push(r);
+      }
+    }
+    return result;
+  }
+
   resolveElt(elt) {
     // Only accept primitive types as Terminal Element 
     let result = null;
@@ -139,7 +161,7 @@ export class ResourceElt {
       try {
         if (typeof elt === 'function') {
           result = elt.call();
-        } 
+        }
 
         if (typeof result === 'object' && elt instanceof ResourceElt) {
           // Allow complex element as terminal
@@ -167,7 +189,7 @@ export class ResourceElt {
         try {
           if (typeof elt === 'function') {
             result = elt.call();
-          } 
+          }
 
           if (result instanceof ResourceElt) {
             return result;
@@ -254,14 +276,23 @@ export class ResourceElt {
 
   // Inbound bindings
   _in_(...elts) {
-    return this;
+    return this.from(elts);
   }
 
   // Outbound bindings
   _out_(...elts) {
+    return this.to(elts);
+  }
+
+  to(...elts) {
+    this.eltsTo.push(this.toElt(elts));
     return this;
   }
 
+  from(...elts) {
+    this.eltsFrom.push(this.toElt(elts));
+    return this;
+  }
 }
 
 
@@ -294,22 +325,6 @@ export class CompositeResourceElt extends ResourceElt {
     }
   }
 
-  initElts(elts) {
-    let result = [];
-    if (Array.isArray(elts)) {
-      result = elts.map(
-        (elt) => { return this.resolveElt(elt); }, this
-      ).filter(e => { return e != null; }, this);
-
-    } else {
-      let r = this.resolveElt(elts);
-      if (r != null) {
-        result.push(r);
-      }
-    }
-    return result;
-  }
-
   isTerminal() {
     return false;
   }
@@ -319,7 +334,7 @@ export class CompositeResourceElt extends ResourceElt {
   }
 
   foundElt(elt) {
-    return this.elts.filter(e => e.id === elt.id).length > 0;
+    return this.elts.filter(e => e.id === elt.id, this).length > 0;
   }
 
   _add_(...elts) {
