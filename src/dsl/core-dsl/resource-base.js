@@ -153,7 +153,7 @@ export class ResourceElt {
     }
     return result;
   }
-
+// */
   resolveElt(elt) {
     // Only accept primitive types as Terminal Element 
     let result = null;
@@ -318,7 +318,7 @@ export class CompositeResourceElt extends ResourceElt {
     //this.finish = new ResourceElt('finish', 'resource', 'mark', provider);
     this.compound = true;
 
-    this.elts = this.initElts(elts);
+    this.elts = this.initElts(elts);//this.resolveElt(elts);//
 
     if (this.title === null) {
       this.title = '' + this.id;
