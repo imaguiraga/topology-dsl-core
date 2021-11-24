@@ -44,4 +44,5 @@ A flow and pipleine DSL in javascript.
 
 ``` Update 
  npm i -g npm-check-updates && ncu -u && npm i
+ ncu -u && yarn
  ```
