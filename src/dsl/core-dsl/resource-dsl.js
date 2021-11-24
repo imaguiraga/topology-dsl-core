@@ -191,7 +191,6 @@ ResourceElt.prototype.group = function (...elts) {
 };
 
 ResourceElt.prototype.sequence = function (...elts) {
-  debugger
   let elt = sequence(...elts);
   this.to(elt);
   return elt;
