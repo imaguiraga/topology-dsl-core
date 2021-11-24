@@ -42,3 +42,7 @@ A flow and pipleine DSL in javascript.
   zeroOrMore("d")
   ```
 
+``` Update 
+ npm i -g npm-check-updates && ncu -u && npm i
+ ncu -u && yarn
+ ```
