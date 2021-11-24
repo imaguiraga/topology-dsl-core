@@ -10,6 +10,7 @@ import {
 } from './resource-elt.js';
 
 import { BASE_ICONS_MAP } from './base-icons-map';
+import { ResourceElt } from './resource-base.js';
 const STYLE = 'style';
 /**
  * Create a fanOut_fanIn dsl tree.
@@ -173,3 +174,81 @@ export function block(...elts) {
 }
 
 // pipeline -> stages -> jobs -> tasks -> steps 
+
+// Extend ResourceElt prototype
+ResourceElt.prototype.choice = function (...elts) {
+  let elt = choice(elts);
+  this.to(elt);
+  return elt;
+
+};
+
+ResourceElt.prototype.group = function (...elts) {
+  let elt = group(elts);
+  this.to(elt);
+  return elt;
+
+};
+
+ResourceElt.prototype.sequence = function (...elts) {
+  let elt = sequence(elts);
+  this.to(elt);
+  return elt;
+
+};
+
+ResourceElt.prototype.optional = function (...elts) {
+  let elt = optional(elts);
+  this.to(elt);
+  return elt;
+
+};
+
+ResourceElt.prototype.repeat = function (...elts) {
+  let elt = repeat(elts);
+  this.to(elt);
+  return elt;
+
+};
+
+ResourceElt.prototype.merge = function (...elts) {
+  let elt = merge(elts);
+  this.to(elt);
+  return elt;
+
+};
+
+ResourceElt.prototype.branch = function (...elts) {
+  let elt = branch(elts);
+  this.to(elt);
+  return elt;
+
+};
+
+ResourceElt.prototype.fanIn = function (...elts) {
+  let elt = fanIn(elts);
+  this.to(elt);
+  return elt;
+
+};
+
+ResourceElt.prototype.fanOut = function (...elts) {
+  let elt = fanOut(elts);
+  this.to(elt);
+  return elt;
+
+};
+
+ResourceElt.prototype.zeroOrMore = function (...elts) {
+  let elt = zeroOrMore(elts);
+  this.to(elt);
+  return elt;
+
+};
+
+ResourceElt.prototype.oneOrMore = function (...elts) {
+  let elt = oneOrMore(elts);
+  this.to(elt);
+  return elt;
+
+};
