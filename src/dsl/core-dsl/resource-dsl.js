@@ -119,6 +119,14 @@ export function terminal(elt) {
   return new TerminalElt(elt)._set_(STYLE, BASE_ICONS_MAP.get('resource'));
 }
 
+export function node(elt) {
+  return terminal(elt);
+}
+
+export function from(elt) {
+  return terminal(elt);
+}
+
 export function transition(elt) {
   return terminal(elt)._tagName_('transition')._set_(STYLE, BASE_ICONS_MAP.get('transition'));
 }
@@ -147,7 +155,7 @@ export function zeroOrMore(elt) {
  * @return {object} resource dsl.
  */
 export function resource(...elt) {
-  if (elt.length > 1) {
+  if (Array.isArray(elt) && elt.length > 1) {
     return group(...elt);
   } else {
     return terminal(elt[0])._tagName_('resource')._set_(STYLE, BASE_ICONS_MAP.get('resource'));
@@ -170,84 +178,84 @@ export function group(...elts) {
  * @return {object} group dsl.
  */
 export function block(...elts) {
-  return group(...elt)._tagName_('block')._set_(STYLE, BASE_ICONS_MAP.get('group'));
+  return group(...elts)._tagName_('block')._set_(STYLE, BASE_ICONS_MAP.get('group'));
 }
 
 // pipeline -> stages -> jobs -> tasks -> steps 
 
 // Extend ResourceElt prototype
 ResourceElt.prototype.choice = function (...elts) {
-  let elt = choice(elts);
+  let elt = choice(...elts);
   this.to(elt);
   return elt;
 
 };
 
 ResourceElt.prototype.group = function (...elts) {
-  let elt = group(elts);
+  let elt = group(...elts);
   this.to(elt);
   return elt;
 
 };
 
 ResourceElt.prototype.sequence = function (...elts) {
-  let elt = sequence(elts);
+  let elt = sequence(...elts);
   this.to(elt);
   return elt;
 
 };
 
 ResourceElt.prototype.optional = function (...elts) {
-  let elt = optional(elts);
+  let elt = optional(...elts);
   this.to(elt);
   return elt;
 
 };
 
 ResourceElt.prototype.repeat = function (...elts) {
-  let elt = repeat(elts);
+  let elt = repeat(...elts);
   this.to(elt);
   return elt;
 
 };
 
 ResourceElt.prototype.merge = function (...elts) {
-  let elt = merge(elts);
+  let elt = merge(...elts);
   this.to(elt);
   return elt;
 
 };
 
 ResourceElt.prototype.branch = function (...elts) {
-  let elt = branch(elts);
+  let elt = branch(...elts);
   this.to(elt);
   return elt;
 
 };
 
 ResourceElt.prototype.fanIn = function (...elts) {
-  let elt = fanIn(elts);
+  let elt = fanIn(...elts);
   this.to(elt);
   return elt;
 
 };
 
 ResourceElt.prototype.fanOut = function (...elts) {
-  let elt = fanOut(elts);
+  let elt = fanOut(...elts);
   this.to(elt);
   return elt;
 
 };
 
 ResourceElt.prototype.zeroOrMore = function (...elts) {
-  let elt = zeroOrMore(elts);
+  let elt = zeroOrMore(...elts);
   this.to(elt);
   return elt;
 
 };
 
 ResourceElt.prototype.oneOrMore = function (...elts) {
-  let elt = oneOrMore(elts);
+  let elt = oneOrMore(...elts);
   this.to(elt);
   return elt;
 

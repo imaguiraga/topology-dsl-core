@@ -78,14 +78,6 @@ export class ResourceElt {
     return this;
   }
 
-  /**
-   * Calls a defined callback function on each element of an array, and returns an array that contains the results.
-   * @param {(value: T, index: number, array: T[]) => U} callbackFn A function that accepts up to three arguments. The map method calls the callbackfn function one time for each element in the array.
-   * @param {Object} thisArg An object to which the this keyword can refer in the callbackfn function. If thisArg is omitted, undefined is used as the this value.
-   * @returns {U[]}
-   */
-
-
   get start() {
     if (this._start == null) {
       this._start = {
@@ -153,7 +145,7 @@ export class ResourceElt {
     }
     return result;
   }
-// */
+
   resolveElt(elt) {
     // Only accept primitive types as Terminal Element 
     let result = null;
@@ -276,21 +268,35 @@ export class ResourceElt {
 
   // Inbound bindings
   _in_(...elts) {
-    return this.from(elts);
+    return this.from(...elts);
   }
 
   // Outbound bindings
   _out_(...elts) {
-    return this.to(elts);
+    return this.to(...elts);
   }
 
   to(...elts) {
-    this.eltsTo.push(this.toElt(elts));
+    if (Array.isArray(elts)) {
+      elts.forEach((elt) => {
+        this.eltsTo.push(this.toElt(elt));
+      }, this);
+
+    } else {
+      this.eltsTo.push(this.toElt(elts));
+    }
     return this;
   }
 
   from(...elts) {
-    this.eltsFrom.push(this.toElt(elts));
+    if (Array.isArray(elts)) {
+      elts.forEach((elt) => {
+        this.eltsFrom.push(this.toElt(elt));
+      }, this);
+
+    } else {
+      this.eltsFrom.push(this.toElt(elts));
+    }
     return this;
   }
 }
