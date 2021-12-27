@@ -119,6 +119,14 @@ export function terminal(elt) {
   return new TerminalElt(elt)._set_(STYLE, BASE_ICONS_MAP.get('resource'));
 }
 
+export function node(elt) {
+  return terminal(elt);
+}
+
+export function from(elt) {
+  return terminal(elt);
+}
+
 export function transition(elt) {
   return terminal(elt)._tagName_('transition')._set_(STYLE, BASE_ICONS_MAP.get('transition'));
 }
