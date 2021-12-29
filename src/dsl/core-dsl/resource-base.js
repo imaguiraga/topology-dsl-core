@@ -34,6 +34,7 @@ export class ResourceElt {
     this.id = this.tagName + '.' + this.idGenIt.next().value;
     this.provider = provider;
     this.compound = false;
+    this.tags = [];
 
     // Layout direction
     this.direction = null;
@@ -238,6 +239,9 @@ export class ResourceElt {
       let tmp = this.id.split('\.');
       tmp[0] = this.tagName;
       this.id = tmp.join('.');
+      // Add to tags set
+      this.tag(value);
+      
     }
     return this;
   }
@@ -299,6 +303,25 @@ export class ResourceElt {
     }
     return this;
   }
+ 
+  tag(...values) {
+    // Add only to tags if it doesn't exist
+    if (Array.isArray(values)) {
+      values.forEach((v) => {
+        if (!this.tags.includes(v)) {
+          this.tags.push(v);
+        }
+      }, this);
+
+    } else {
+      if (!this.tags.includes(values)) {
+        this.tags.push(values);
+      }
+    }
+
+    return this;
+  }
+
 }
 
 
