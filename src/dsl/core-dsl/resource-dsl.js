@@ -18,7 +18,10 @@ const STYLE = 'style';
  * @return {object} flow dsl.
  */
 export function fanIn(elts, fanInTo) {
-  return sequence(elts, fanInTo)._tagName_('fanIn')._set_(STYLE, BASE_ICONS_MAP.get('fanIn'))._nostart_(true);
+  return sequence(elts, fanInTo)
+    ._tagName_('fanIn')
+    ._set_(STYLE, BASE_ICONS_MAP.get('fanIn'))
+    ._nostart_(true);
 }
 
 // Extend ResourceElt prototype
@@ -36,7 +39,10 @@ ResourceElt.prototype.fanIn = function (elts, fanInTo) {
  * @return {object} flow dsl.
  */
 export function fanOut(fanOutFrom, elts) {
-  return sequence(fanOutFrom, elts)._tagName_('fanOut')._set_(STYLE, BASE_ICONS_MAP.get('fanOut'))._noend_(true);
+  return sequence(fanOutFrom, elts)
+    ._tagName_('fanOut')
+    ._set_(STYLE, BASE_ICONS_MAP.get('fanOut'))
+    ._noend_(true);
 }
 
 // Extend ResourceElt prototype
@@ -55,7 +61,11 @@ ResourceElt.prototype.fanOut = function (fanOutFrom, elts) {
  * @return {object} flow dsl.
  */
 export function fanIn_fanOut(fanInElts, fanInTo, fanOutElts) {
-  return sequence(fanInElts, fanInTo, fanOutElts)._tagName_('fanIn_fanOut')._set_(STYLE, BASE_ICONS_MAP.get('fanIn_fanOut'));
+  return sequence(fanInElts, fanInTo, fanOutElts)
+    ._tagName_('fanIn_fanOut')
+    ._set_(STYLE, BASE_ICONS_MAP.get('fanIn_fanOut'))
+    ._nostart_(true)
+    ._noend_(true);
 }
 
 /**
