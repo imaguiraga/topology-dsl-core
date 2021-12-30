@@ -18,7 +18,7 @@ const STYLE = 'style';
  * @return {object} flow dsl.
  */
 export function fanIn(elts, fanInTo) {
-  return sequence(elts, fanInTo)._tagName_('fanIn')._set_(STYLE, BASE_ICONS_MAP.get('fanIn'));
+  return sequence(elts, fanInTo)._tagName_('fanIn')._set_(STYLE, BASE_ICONS_MAP.get('fanIn'))._nostart_(true);
 }
 
 // Extend ResourceElt prototype
@@ -36,7 +36,7 @@ ResourceElt.prototype.fanIn = function (elts, fanInTo) {
  * @return {object} flow dsl.
  */
 export function fanOut(fanOutFrom, elts) {
-  return sequence(fanOutFrom, elts)._tagName_('fanOut')._set_(STYLE, BASE_ICONS_MAP.get('fanOut'));
+  return sequence(fanOutFrom, elts)._tagName_('fanOut')._set_(STYLE, BASE_ICONS_MAP.get('fanOut'))._noend_(true);
 }
 
 // Extend ResourceElt prototype
