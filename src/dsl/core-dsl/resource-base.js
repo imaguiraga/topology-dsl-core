@@ -28,12 +28,17 @@ export class ResourceElt {
     this.idGenIt = NODEIDGENFN;
     this.title = 'title';
 
+    // Add start finish nodes
+    this.nostart = false;
+    this.noend = false;
+
     //get new id
     this.kind = kind || 'resource';
     this.tagName = tagName || 'resource';
     this.id = this.tagName + '.' + this.idGenIt.next().value;
     this.provider = provider;
     this.compound = false;
+    this.tags = [];
 
     // Layout direction
     this.direction = null;
@@ -238,6 +243,9 @@ export class ResourceElt {
       let tmp = this.id.split('\.');
       tmp[0] = this.tagName;
       this.id = tmp.join('.');
+      // Add to tags set
+      this.tag(value);
+      
     }
     return this;
   }
@@ -299,6 +307,35 @@ export class ResourceElt {
     }
     return this;
   }
+ 
+  tag(...values) {
+    // Add only to tags if it doesn't exist
+    if (Array.isArray(values)) {
+      values.forEach((v) => {
+        if (!this.tags.includes(v)) {
+          this.tags.push(v);
+        }
+      }, this);
+
+    } else {
+      if (!this.tags.includes(values)) {
+        this.tags.push(values);
+      }
+    }
+
+    return this;
+  }
+
+  _noend_(value) {
+    this.noend = value;
+    return this;
+  }
+
+  _nostart_(value) {
+    this.nostart = value;
+    return this;
+  }
+
 }
 
 

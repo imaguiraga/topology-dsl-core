@@ -22,54 +22,6 @@ export class GroupElt extends CompositeResourceElt {
 
 }
 
-const FANOUT_FANIN = 'fanOut_fanIn';
-/**
- * Class FanInFanOutElt.
- * @extends CompositeResourceElt
- */
-export class FanOutFanInElt extends CompositeResourceElt {
-  /**
-   * Create a FanOutFanInElt.
-   * @param {object} elts - The elts value.
-   */
-  constructor(elts) {
-    super(elts, FANOUT_FANIN, FANOUT_FANIN, WORKFLOW_PROVIDER);
-  }
-
-}
-
-const FANIN = 'fanIn';
-/**
- * Class FanInElt.
- * @extends CompositeResourceElt
- */
-export class FanInElt extends CompositeResourceElt {
-  /**
-   * Create a FanInElt.
-   * @param {object} elts - The elts value.
-   */
-  constructor(elts) {
-    super(elts, FANIN, FANIN, WORKFLOW_PROVIDER);
-  }
-
-}
-
-const FANOUT = 'fanOut';
-/**
- * Class FanOutElt.
- * @extends CompositeResourceElt
- */
-export class FanOutElt extends CompositeResourceElt {
-  /**
-   * Create a FanOutElt.
-   * @param {object} elts - The elts value.
-   */
-  constructor(elts) {
-    super(elts, FANOUT, FANOUT, WORKFLOW_PROVIDER);
-  }
-
-}
-
 const OPTIONAL = 'optional';
 /**
  * Class OptionalElt.
