@@ -1,7 +1,4 @@
 import {
-  FanOutFanInElt,
-  FanInElt,
-  FanOutElt,
   OptionalElt,
   RepeatElt,
   SequenceElt,
@@ -12,61 +9,24 @@ import {
 import { BASE_ICONS_MAP } from './base-icons-map';
 import { ResourceElt } from './resource-base.js';
 const STYLE = 'style';
-/**
- * Create a fanOut_fanIn dsl tree.
- * @param {array|object} elts - The elements.
- * @return {object} flow dsl.
- */
-export function fanOut_fanIn(...elts) {
-  return new FanOutFanInElt([...elts])._set_(STYLE, BASE_ICONS_MAP.get('fanOut_fanIn'));
-}
 
-/**
- * Create a choice dsl tree.
- * @param {array|object} elts - The elements.
- * @return {object} flow dsl.
- */
-export function choice(...elts) {
-  return fanOut_fanIn(...elts)._tagName_('choice')._set_(STYLE, BASE_ICONS_MAP.get('choice'));
-}
-
-// Extend ResourceElt prototype
-ResourceElt.prototype.choice = function (...elts) {
-  let elt = choice(...elts);
-  this.to(elt);
-  return elt;
-
-};
 
 /**
  * Create a fanIn dsl tree.
- * @param {array|object} elts - The elements.
+ * @param {array|object} elts - The elements fanning in.
+ * @param {object} fanInTo - The fanInTo element.
  * @return {object} flow dsl.
  */
-export function fanIn(...elts) {
-  return new FanInElt([...elts])._set_(STYLE, BASE_ICONS_MAP.get('fanIn'));
+export function fanIn(elts, fanInTo) {
+  return sequence(elts, fanInTo)
+    ._tagName_('fanIn')
+    ._set_(STYLE, BASE_ICONS_MAP.get('fanIn'))
+    ._nostart_(true);
 }
 
 // Extend ResourceElt prototype
-ResourceElt.prototype.fanIn = function (...elts) {
-  let elt = fanIn(...elts);
-  this.to(elt);
-  return elt;
-
-};
-
-/**
- * Create a merge dsl tree.
- * @param {array|object} elts - The elements.
- * @return {object} flow dsl.
- */
-export function merge(...elts) {
-  return fanIn(...elts)._tagName_('fanIn')._set_(STYLE, BASE_ICONS_MAP.get('merge'));
-}
-
-// Extend ResourceElt prototype
-ResourceElt.prototype.merge = function (...elts) {
-  let elt = merge(...elts);
+ResourceElt.prototype.fanIn = function (elts, fanInTo) {
+  let elt = fanIn(elts, fanInTo);
   this.to(elt);
   return elt;
 
@@ -74,16 +34,81 @@ ResourceElt.prototype.merge = function (...elts) {
 
 /**
  * Create a fanOut dsl tree.
+ * @param {object} fanOutFrom - The fanOutFrom element.
  * @param {array|object} elts - The elements.
  * @return {object} flow dsl.
  */
-export function fanOut(...elts) {
-  return new FanOutElt([...elts])._set_(STYLE, BASE_ICONS_MAP.get('fanOut'));
+export function fanOut(fanOutFrom, elts) {
+  return sequence(fanOutFrom, elts)
+    ._tagName_('fanOut')
+    ._set_(STYLE, BASE_ICONS_MAP.get('fanOut'))
+    ._noend_(true);
 }
 
 // Extend ResourceElt prototype
-ResourceElt.prototype.fanOut = function (...elts) {
-  let elt = fanOut(...elts);
+ResourceElt.prototype.fanOut = function (fanOutFrom, elts) {
+  let elt = fanOut(fanOutFrom, elts);
+  this.to(elt);
+  return elt;
+
+};
+
+/**
+ * Create a fanInOut dsl tree.
+ * @param {array|object} fanInElts - The fanInElts element.
+ * @param {object} fanInTo - The fanInTo element.
+ * @param {array|object} fanOutElts - The fanOutElts elements.
+ * @return {object} flow dsl.
+ */
+export function fanIn_fanOut(fanInElts, fanInTo, fanOutElts) {
+  return sequence(fanInElts, fanInTo, fanOutElts)
+    ._tagName_('fanIn_fanOut')
+    ._set_(STYLE, BASE_ICONS_MAP.get('fanIn_fanOut'))
+    ._nostart_(true)
+    ._noend_(true);
+}
+
+/**
+ * Create a fanInOut dsl tree.
+ * @param {object} fanOutFrom - The fanOutFrom element.
+ * @param {array|object} fanOutElts - The fanOutElts elements.
+ * @param {object} fanInTo - The fanInTo element.
+ * @return {object} flow dsl.
+ */
+export function fanOut_fanIn(fanOutFrom, fanOutElts, fanInTo) {
+  return sequence(fanOutFrom, fanOutElts, fanInTo)._tagName_('fanOut_fanIn')._set_(STYLE, BASE_ICONS_MAP.get('fanOut_fanIn'));
+}
+
+/**
+ * Create a choice dsl tree.
+ * @param {array|object} elts - The elements.
+ * @return {object} flow dsl.
+ */
+export function choice(fanOutFrom, fanOutElts, fanInTo) {
+  return fanOut_fanIn(fanOutFrom, fanOutElts, fanInTo)._tagName_('choice')._set_(STYLE, BASE_ICONS_MAP.get('choice'));
+}
+
+// Extend ResourceElt prototype
+ResourceElt.prototype.choice = function (fanOutFrom, fanOutElts, fanInTo) {
+  let elt = choice(fanOutFrom, fanOutElts, fanInTo);
+  this.to(elt);
+  return elt;
+
+};
+
+/**
+ * Create a merge dsl tree.
+ * @param {array|object} elts - The elements fanning in.
+ * @param {object} fanInTo - The fanInTo element.
+ * @return {object} flow dsl.
+ */
+export function merge(elts, fanInTo) {
+  return fanIn(elts, fanInTo)._tagName_('fanIn')._set_(STYLE, BASE_ICONS_MAP.get('merge'));
+}
+
+// Extend ResourceElt prototype
+ResourceElt.prototype.merge = function (elts, fanInTo) {
+  let elt = merge(elts, fanInTo);
   this.to(elt);
   return elt;
 
@@ -91,16 +116,17 @@ ResourceElt.prototype.fanOut = function (...elts) {
 
 /**
  * Create a branch dsl tree.
+ * @param {object} fanOutFrom - The fanOutFrom element.
  * @param {array|object} elts - The elements.
  * @return {object} flow dsl.
  */
-export function branch(...elts) {
-  return fanOut(...elts)._tagName_('branch')._set_(STYLE, BASE_ICONS_MAP.get('branch'));
+export function branch(fanOutFrom, elts) {
+  return fanOut(fanOutFrom, elts)._tagName_('branch')._set_(STYLE, BASE_ICONS_MAP.get('branch'));
 }
 
 // Extend ResourceElt prototype
-ResourceElt.prototype.branch = function (...elts) {
-  let elt = branch(...elts);
+ResourceElt.prototype.branch = function (fanOutFrom, elts) {
+  let elt = branch(fanOutFrom, elts);
   this.to(elt);
   return elt;
 
@@ -108,47 +134,12 @@ ResourceElt.prototype.branch = function (...elts) {
 
 /**
  * Create a split dsl tree.
+ * @param {object} fanOutFrom - The fanOutFrom element.
  * @param {array|object} elts - The elements.
  * @return {object} flow dsl.
  */
-export function split(...elts) {
-  return fanOut(...elts)._tagName_('split')._set_(STYLE, BASE_ICONS_MAP.get('split'));
-}
-
-/**
- * Create a tree dsl tree.
- * @param {array|object} elts - The elements.
- * @return {object} flow dsl.
- */
-export function tree(...elts) {
-  return fanOut(...elts)._tagName_('tree')._set_(STYLE, BASE_ICONS_MAP.get('tree'));
-}
-
-/**
- * Create a link dsl tree.
- * @param {array|object} elts - The elements.
- * @return {object} flow dsl.
- */
-export function link(...elts) {
-  return fanOut(...elts)._tagName_('link')._set_(STYLE, BASE_ICONS_MAP.get('link'));
-}
-
-/**
- * Create a use dsl tree.
- * @param {array|object} elts - The elements.
- * @return {object} flow dsl.
- */
-export function use(...elts) {
-  return fanOut(...elts)._tagName_('use')._set_(STYLE, BASE_ICONS_MAP.get('use'));
-}
-
-/**
- * Create a parallel dsl tree.
- * @param {array|object} elts - The elements.
- * @return {object} flow dsl.
- */
-export function parallel(...elts) {
-  return fanOut(...elts)._tagName_('parallel')._set_(STYLE, BASE_ICONS_MAP.get('parallel'));
+export function split(fanOutFrom, elts) {
+  return fanOut(fanOutFrom, elts)._tagName_('split')._set_(STYLE, BASE_ICONS_MAP.get('split'));
 }
 
 /**
@@ -220,24 +211,6 @@ ResourceElt.prototype.sequence = function (...elts) {
 };
 
 /**
- * Create a process dsl tree.
- * @param {array|object} elts - The elements.
- * @return {object} flow dsl.
- */
-export function process(...elts) {
-  return sequence(...elts)._tagName_('process')._set_(STYLE, BASE_ICONS_MAP.get('process'));
-}
-
-/**
- * Create a activity dsl tree.
- * @param {array|object} elts - The elements.
- * @return {object} flow dsl.
- */
-export function activity(...elts) {
-  return sequence(...elts)._tagName_('activity')._set_(STYLE, BASE_ICONS_MAP.get('activity'));
-}
-
-/**
  * Create a terminal dsl tree.
  * @param {object} elt - The element.
  * @return {object} flow dsl.
@@ -262,24 +235,6 @@ export function node(elt) {
  */
 export function from(elt) {
   return terminal(elt);
-}
-
-/**
- * Create a transition dsl tree.
- * @param {array|object} elts - The elements.
- * @return {object} flow dsl.
- */
-export function transition(elt) {
-  return terminal(elt)._tagName_('transition')._set_(STYLE, BASE_ICONS_MAP.get('transition'));
-}
-
-/**
- * Create a state dsl tree.
- * @param {object} elt - The element.
- * @return {object} flow dsl.
- */
-export function state(elt) {
-  return terminal(elt)._tagName_('state')._set_(STYLE, BASE_ICONS_MAP.get('state'));
 }
 
 /**

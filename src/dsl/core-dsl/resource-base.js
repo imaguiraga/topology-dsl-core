@@ -28,6 +28,10 @@ export class ResourceElt {
     this.idGenIt = NODEIDGENFN;
     this.title = 'title';
 
+    // Add start finish nodes
+    this.nostart = false;
+    this.noend = false;
+
     //get new id
     this.kind = kind || 'resource';
     this.tagName = tagName || 'resource';
@@ -319,6 +323,16 @@ export class ResourceElt {
       }
     }
 
+    return this;
+  }
+
+  _noend_(value) {
+    this.noend = value;
+    return this;
+  }
+
+  _nostart_(value) {
+    this.nostart = value;
     return this;
   }
 
