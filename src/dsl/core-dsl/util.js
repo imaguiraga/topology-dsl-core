@@ -1,7 +1,7 @@
 import {
-  ResourceElt,
-  CompositeResourceElt
-} from './resource-base.js';
+  BaseElt,
+  CompositeElt
+} from './base-elt';
 
 export function isContainer(n) {
   return (n.children && n.children != null && n.children.length > 0) ||
@@ -79,9 +79,9 @@ export function jsonToDslObject(o) {
   let result = o;
   if (o.start === undefined) {
     if (o.compound) {
-      Object.setPrototypeOf(o, CompositeResourceElt.prototype);
+      Object.setPrototypeOf(o, CompositeElt.prototype);
     } else {
-      Object.setPrototypeOf(o, ResourceElt.prototype);
+      Object.setPrototypeOf(o, BaseElt.prototype);
     }
     if (Array.isArray(result.elts)) {
       // Recursively enrich elts
