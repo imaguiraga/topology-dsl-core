@@ -213,24 +213,41 @@ BaseElt.prototype.sequence = function (...elts) {
 /**
  * Create a terminal dsl tree.
  * @param {object} elt - The element.
+ * @param {object} options
  * @return {object} flow dsl.
  */
-
-export function terminal(elt) {
-  return new TerminalElt(elt)._set_(STYLE, BASE_ICONS_MAP.get('resource'));
+export function terminal(elt, options) {
+  return new TerminalElt(elt, options)._set_(STYLE, BASE_ICONS_MAP.get('resource'));
 }
 
-export function element(elt) {
-  return terminal(elt)._tagName_('element');
+/**
+ * Create a service dsl tree.
+ * @param {object} elt - The element.
+ * @param {object} options
+ * @return {object} service dsl.
+ */
+export function element(elt, options) {
+  return terminal(elt, options)._tagName_('element');
+}
+
+/**
+ * Create a service dsl tree.
+ * @param {object} elt - The element.
+ * @param {object} options
+ * @return {object} service dsl.
+ */
+export function service(elt, options) {
+  return terminal(elt, options)._tagName_('service');
 }
 
 /**
  * Create a node dsl tree.
  * @param {array|object} elts - The elements.
+ * @param {object} options
  * @return {object} flow dsl.
  */
-export function node(elt) {
-  return terminal(elt);
+export function node(elt, options) {
+  return terminal(elt, options);
 }
 
 /**
@@ -238,8 +255,8 @@ export function node(elt) {
  * @param {array|object} elts - The elements.
  * @return {object} flow dsl.
  */
-export function from(elt) {
-  return terminal(elt);
+export function from(elt, options) {
+  return terminal(elt, options);
 }
 
 /**
@@ -271,15 +288,6 @@ export function resource(...elt) {
     return terminal(elt[0])._tagName_('resource')._set_(STYLE, BASE_ICONS_MAP.get('resource'));
   }
 
-}
-
-/**
- * Create a service dsl tree.
- * @param {object} elt - The element.
- * @return {object} service dsl.
- */
- export function service(...elt) {
-  return resource(...elt)._tagName_('service');
 }
 
 /**

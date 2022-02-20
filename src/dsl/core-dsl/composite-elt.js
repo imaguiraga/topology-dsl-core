@@ -86,8 +86,6 @@ export class SequenceElt extends CompositeElt {
 
 }
 
-const RESOURCE = 'resource';
-
 const TERMINAL = 'terminal';
 /**
  * Class TerminalElt.
@@ -98,8 +96,8 @@ export class TerminalElt extends BaseElt {
    * Create a TerminalElt.
    * @param {object} elt - The elt value.
    */
-  constructor(elt) {
-    super(elt, TERMINAL, TERMINAL, WORKFLOW_PROVIDER);
+  constructor(elt, options) {
+    super(elt, TERMINAL, TERMINAL, WORKFLOW_PROVIDER, options);
   }
 
 }

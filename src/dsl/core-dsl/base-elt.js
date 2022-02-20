@@ -22,8 +22,9 @@ export class BaseElt {
    * @param {string} kind - The kind value.
    * @param {string} tagName - The tagName value.
    * @param {string} provider - The resource provider value.
+   * @param {object} options
    */
-  constructor(elts, kind, tagName, provider) {
+  constructor(elts, kind, tagName, provider, options) {
     // Next Id Generator
     this.idGenIt = NODEIDGENFN;
     this.title = 'title';
@@ -39,6 +40,8 @@ export class BaseElt {
     this.provider = provider;
     this.compound = false;
     this.tags = [];
+    // optional
+    this.options = options;
 
     // Layout direction
     this.direction = null;
@@ -245,7 +248,7 @@ export class BaseElt {
       this.id = tmp.join('.');
       // Add to tags set
       this.tag(value);
-      
+
     }
     return this;
   }
@@ -307,7 +310,7 @@ export class BaseElt {
     }
     return this;
   }
- 
+
   tag(...values) {
     // Add only to tags if it doesn't exist
     if (Array.isArray(values)) {
