@@ -215,12 +215,13 @@ BaseElt.prototype.sequence = function (...elts) {
  * @param {object} elt - The element.
  * @return {object} flow dsl.
  */
-export function element(elt) {
+
+export function terminal(elt) {
   return new TerminalElt(elt)._set_(STYLE, BASE_ICONS_MAP.get('resource'));
 }
 
-export function terminal(elt) {
-  return element(elt);
+export function element(elt) {
+  return terminal(elt)._tagName_('element');
 }
 
 /**
@@ -270,6 +271,15 @@ export function resource(...elt) {
     return terminal(elt[0])._tagName_('resource')._set_(STYLE, BASE_ICONS_MAP.get('resource'));
   }
 
+}
+
+/**
+ * Create a service dsl tree.
+ * @param {object} elt - The element.
+ * @return {object} service dsl.
+ */
+ export function service(...elt) {
+  return resource(...elt)._tagName_('service');
 }
 
 /**
