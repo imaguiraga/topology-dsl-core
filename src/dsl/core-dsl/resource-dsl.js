@@ -4,10 +4,10 @@ import {
   SequenceElt,
   TerminalElt,
   GroupElt
-} from './resource-elt.js';
+} from './composite-elt.js';
 
 import { BASE_ICONS_MAP } from './base-icons-map';
-import { ResourceElt } from './resource-base.js';
+import { BaseElt } from './base-elt.js';
 const STYLE = 'style';
 
 
@@ -24,8 +24,8 @@ export function fanIn(elts, fanInTo) {
     ._nostart_(true);
 }
 
-// Extend ResourceElt prototype
-ResourceElt.prototype.fanIn = function (elts, fanInTo) {
+// Extend BaseElt prototype
+BaseElt.prototype.fanIn = function (elts, fanInTo) {
   let elt = fanIn(elts, fanInTo);
   this.to(elt);
   return elt;
@@ -45,8 +45,8 @@ export function fanOut(fanOutFrom, elts) {
     ._noend_(true);
 }
 
-// Extend ResourceElt prototype
-ResourceElt.prototype.fanOut = function (fanOutFrom, elts) {
+// Extend BaseElt prototype
+BaseElt.prototype.fanOut = function (fanOutFrom, elts) {
   let elt = fanOut(fanOutFrom, elts);
   this.to(elt);
   return elt;
@@ -88,8 +88,8 @@ export function choice(fanOutFrom, fanOutElts, fanInTo) {
   return fanOut_fanIn(fanOutFrom, fanOutElts, fanInTo)._tagName_('choice')._set_(STYLE, BASE_ICONS_MAP.get('choice'));
 }
 
-// Extend ResourceElt prototype
-ResourceElt.prototype.choice = function (fanOutFrom, fanOutElts, fanInTo) {
+// Extend BaseElt prototype
+BaseElt.prototype.choice = function (fanOutFrom, fanOutElts, fanInTo) {
   let elt = choice(fanOutFrom, fanOutElts, fanInTo);
   this.to(elt);
   return elt;
@@ -106,8 +106,8 @@ export function merge(elts, fanInTo) {
   return fanIn(elts, fanInTo)._tagName_('fanIn')._set_(STYLE, BASE_ICONS_MAP.get('merge'));
 }
 
-// Extend ResourceElt prototype
-ResourceElt.prototype.merge = function (elts, fanInTo) {
+// Extend BaseElt prototype
+BaseElt.prototype.merge = function (elts, fanInTo) {
   let elt = merge(elts, fanInTo);
   this.to(elt);
   return elt;
@@ -124,8 +124,8 @@ export function branch(fanOutFrom, elts) {
   return fanOut(fanOutFrom, elts)._tagName_('branch')._set_(STYLE, BASE_ICONS_MAP.get('branch'));
 }
 
-// Extend ResourceElt prototype
-ResourceElt.prototype.branch = function (fanOutFrom, elts) {
+// Extend BaseElt prototype
+BaseElt.prototype.branch = function (fanOutFrom, elts) {
   let elt = branch(fanOutFrom, elts);
   this.to(elt);
   return elt;
@@ -151,8 +151,8 @@ export function optional(elt) {
   return new OptionalElt(elt)._set_(STYLE, BASE_ICONS_MAP.get('optional'));
 }
 
-// Extend ResourceElt prototype
-ResourceElt.prototype.optional = function (...elts) {
+// Extend BaseElt prototype
+BaseElt.prototype.optional = function (...elts) {
   let elt = optional(...elts);
   this.to(elt);
   return elt;
@@ -168,8 +168,8 @@ export function repeat(elt) {
   return new RepeatElt(elt)._set_(STYLE, BASE_ICONS_MAP.get('repeat'));
 }
 
-// Extend ResourceElt prototype
-ResourceElt.prototype.repeat = function (...elts) {
+// Extend BaseElt prototype
+BaseElt.prototype.repeat = function (...elts) {
   let elt = repeat(...elts);
   this.to(elt);
   return elt;
@@ -185,8 +185,8 @@ export function oneOrMore(elt) {
   return repeat(elt)._set_(STYLE, BASE_ICONS_MAP.get('oneOrMore'));
 }
 
-// Extend ResourceElt prototype
-ResourceElt.prototype.oneOrMore = function (...elts) {
+// Extend BaseElt prototype
+BaseElt.prototype.oneOrMore = function (...elts) {
   let elt = oneOrMore(...elts);
   this.to(elt);
   return elt;
@@ -202,8 +202,8 @@ export function sequence(...elts) {
   return new SequenceElt([...elts])._set_(STYLE, BASE_ICONS_MAP.get('sequence'));
 }
 
-// Extend ResourceElt prototype
-ResourceElt.prototype.sequence = function (...elts) {
+// Extend BaseElt prototype
+BaseElt.prototype.sequence = function (...elts) {
   let elt = sequence(...elts);
   this.to(elt);
   return elt;
@@ -213,19 +213,41 @@ ResourceElt.prototype.sequence = function (...elts) {
 /**
  * Create a terminal dsl tree.
  * @param {object} elt - The element.
+ * @param {object} options
  * @return {object} flow dsl.
  */
-export function terminal(elt) {
-  return new TerminalElt(elt)._set_(STYLE, BASE_ICONS_MAP.get('resource'));
+export function terminal(elt, options) {
+  return new TerminalElt(elt, options)._set_(STYLE, BASE_ICONS_MAP.get('resource'));
+}
+
+/**
+ * Create a service dsl tree.
+ * @param {object} elt - The element.
+ * @param {object} options
+ * @return {object} service dsl.
+ */
+export function element(elt, options) {
+  return terminal(elt, options)._tagName_('element');
+}
+
+/**
+ * Create a service dsl tree.
+ * @param {object} elt - The element.
+ * @param {object} options
+ * @return {object} service dsl.
+ */
+export function service(elt, options) {
+  return terminal(elt, options)._tagName_('service');
 }
 
 /**
  * Create a node dsl tree.
  * @param {array|object} elts - The elements.
+ * @param {object} options
  * @return {object} flow dsl.
  */
-export function node(elt) {
-  return terminal(elt);
+export function node(elt, options) {
+  return terminal(elt, options);
 }
 
 /**
@@ -233,8 +255,8 @@ export function node(elt) {
  * @param {array|object} elts - The elements.
  * @return {object} flow dsl.
  */
-export function from(elt) {
-  return terminal(elt);
+export function from(elt, options) {
+  return terminal(elt, options);
 }
 
 /**
@@ -246,8 +268,8 @@ export function zeroOrMore(elt) {
   return optional(repeat(elt))._set_(STYLE, BASE_ICONS_MAP.get('zeroOrMore'));
 }
 
-// Extend ResourceElt prototype
-ResourceElt.prototype.zeroOrMore = function (...elts) {
+// Extend BaseElt prototype
+BaseElt.prototype.zeroOrMore = function (...elts) {
   let elt = zeroOrMore(...elts);
   this.to(elt);
   return elt;
@@ -277,8 +299,8 @@ export function group(...elts) {
   return new GroupElt([...elts])._set_(STYLE, BASE_ICONS_MAP.get('group'));
 }
 
-// Extend ResourceElt prototype
-ResourceElt.prototype.group = function (...elts) {
+// Extend BaseElt prototype
+BaseElt.prototype.group = function (...elts) {
   let elt = group(...elts);
   this.to(elt);
   return elt;
@@ -311,8 +333,8 @@ export function source(...elts) {
   return elts;
 }
 
-// Extend ResourceElt prototype
-ResourceElt.prototype.source = function (...elts) {
+// Extend BaseElt prototype
+BaseElt.prototype.source = function (...elts) {
   let elt = source(...elts);
   this.to(elt);
   return elt;
@@ -336,8 +358,8 @@ export function sink(...elts) {
   return elts;
 }
 
-// Extend ResourceElt prototype
-ResourceElt.prototype.sink = function (...elts) {
+// Extend BaseElt prototype
+BaseElt.prototype.sink = function (...elts) {
   let elt = sink(...elts);
   this.to(elt);
   return elt;

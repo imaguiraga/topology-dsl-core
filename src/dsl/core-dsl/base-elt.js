@@ -13,17 +13,18 @@ function* idGenFn(prefix, index) {
 export const NODEIDGENFN = idGenFn('node.', 0);
 
 /**
- * Class ResourceElt.
+ * Class BaseElt.
  */
-export class ResourceElt {
+export class BaseElt {
   /**
-   * Create a ResourceElt.
+   * Create a BaseElt.
    * @param {object} elts - The elts value.
    * @param {string} kind - The kind value.
    * @param {string} tagName - The tagName value.
    * @param {string} provider - The resource provider value.
+   * @param {object} options
    */
-  constructor(elts, kind, tagName, provider) {
+  constructor(elts, kind, tagName, provider, options) {
     // Next Id Generator
     this.idGenIt = NODEIDGENFN;
     this.title = 'title';
@@ -39,6 +40,8 @@ export class ResourceElt {
     this.provider = provider;
     this.compound = false;
     this.tags = [];
+    // optional
+    this.options = options;
 
     // Layout direction
     this.direction = null;
@@ -160,7 +163,7 @@ export class ResourceElt {
           result = elt.call();
         }
 
-        if (typeof result === 'object' && elt instanceof ResourceElt) {
+        if (typeof result === 'object' && elt instanceof BaseElt) {
           // Allow complex element as terminal
           result = elt;
 
@@ -180,7 +183,7 @@ export class ResourceElt {
     let result = null;
     if (elt !== undefined && elt !== null) {
       result = elt;
-      if (result instanceof ResourceElt) {
+      if (result instanceof BaseElt) {
         return result;
       } else {
         try {
@@ -188,7 +191,7 @@ export class ResourceElt {
             result = elt.call();
           }
 
-          if (result instanceof ResourceElt) {
+          if (result instanceof BaseElt) {
             return result;
           } else if (typeof result === 'object') {
             // Allow complex element as terminal
@@ -203,7 +206,7 @@ export class ResourceElt {
 
           } else {
             // very likely a primitive type
-            result = new ResourceElt(elt, 'resource', 'resource', this.provider);
+            result = new BaseElt(elt, 'resource', 'resource', this.provider);
           }
 
         } catch (err) {
@@ -245,7 +248,7 @@ export class ResourceElt {
       this.id = tmp.join('.');
       // Add to tags set
       this.tag(value);
-      
+
     }
     return this;
   }
@@ -307,7 +310,7 @@ export class ResourceElt {
     }
     return this;
   }
- 
+
   tag(...values) {
     // Add only to tags if it doesn't exist
     if (Array.isArray(values)) {
@@ -340,12 +343,12 @@ export class ResourceElt {
 
 
 /**
- * Class CompositeResourceElt.
- * @extends ResourceElt
+ * Class CompositeElt.
+ * @extends BaseElt
  */
-export class CompositeResourceElt extends ResourceElt {
+export class CompositeElt extends BaseElt {
   /**
-   * Create a CompositeResourceElt.
+   * Create a CompositeElt.
    * @param {object} elts - The elts value.
    * @param {string} kind - The kind value.
    * @param {string} tagName - The tagName value.
@@ -357,8 +360,6 @@ export class CompositeResourceElt extends ResourceElt {
     this.title = null;
     this._start = null;
     this._finish = null;
-    //this.start = new ResourceElt('start', 'resource', 'mark', provider);
-    //this.finish = new ResourceElt('finish', 'resource', 'mark', provider);
     this.compound = true;
 
     this.elts = this.initElts(elts);//this.resolveElt(elts);//

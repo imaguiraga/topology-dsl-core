@@ -1,7 +1,7 @@
 import {
-  CompositeResourceElt,
-  ResourceElt
-} from './resource-base.js';
+  CompositeElt,
+  BaseElt
+} from './base-elt.js';
 
 export const WORKFLOW_KIND = 'workflow';
 export const WORKFLOW_PROVIDER = 'default';
@@ -9,9 +9,9 @@ export const WORKFLOW_PROVIDER = 'default';
 const GROUP = 'group';
 /**
  * Class GroupElt.
- * @extends CompositeResourceElt
+ * @extends CompositeElt
  */
-export class GroupElt extends CompositeResourceElt {
+export class GroupElt extends CompositeElt {
   /**
    * Create a SequenceElt.
    * @param {object} elts - The elts value.
@@ -25,9 +25,9 @@ export class GroupElt extends CompositeResourceElt {
 const OPTIONAL = 'optional';
 /**
  * Class OptionalElt.
- * @extends CompositeResourceElt
+ * @extends CompositeElt
  */
-export class OptionalElt extends CompositeResourceElt {
+export class OptionalElt extends CompositeElt {
   /**
    * Create a OptionalElt.
    * @param {object} elts - The elts value.
@@ -49,9 +49,9 @@ export class OptionalElt extends CompositeResourceElt {
 const REPEAT = 'repeat';
 /**
  * Class RepeatElt.
- * @extends CompositeResourceElt
+ * @extends CompositeElt
  */
-export class RepeatElt extends CompositeResourceElt {
+export class RepeatElt extends CompositeElt {
   /**
    * Create a RepeatElt.
    * @param {object} elts - The elts value.
@@ -73,9 +73,9 @@ export class RepeatElt extends CompositeResourceElt {
 const SEQUENCE = 'sequence';
 /**
  * Class SequenceElt.
- * @extends CompositeResourceElt
+ * @extends CompositeElt
  */
-export class SequenceElt extends CompositeResourceElt {
+export class SequenceElt extends CompositeElt {
   /**
    * Create a SequenceElt.
    * @param {object} elts - The elts value.
@@ -86,18 +86,19 @@ export class SequenceElt extends CompositeResourceElt {
 
 }
 
-const RESOURCE = 'resource';
+const TERMINAL = 'terminal';
 /**
  * Class TerminalElt.
  */
-export class TerminalElt extends ResourceElt {
+export class TerminalElt extends BaseElt {
 
   /**
    * Create a TerminalElt.
    * @param {object} elt - The elt value.
    */
-  constructor(elt) {
-    super(elt, RESOURCE, RESOURCE, WORKFLOW_PROVIDER);
+  constructor(elt, options) {
+    super(elt, TERMINAL, TERMINAL, WORKFLOW_PROVIDER, options);
   }
 
 }
+
