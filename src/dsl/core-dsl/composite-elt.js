@@ -96,8 +96,8 @@ export class TerminalElt extends BaseElt {
    * Create a TerminalElt.
    * @param {object} elt - The elt value.
    */
-  constructor(elt, options) {
-    super(elt, TERMINAL, TERMINAL, WORKFLOW_PROVIDER, options);
+  constructor(elt, config) {
+    super(elt, TERMINAL, TERMINAL, WORKFLOW_PROVIDER, config);
   }
 
 }
