@@ -22,9 +22,8 @@ export class BaseElt {
    * @param {string} kind - The kind value.
    * @param {string} tagName - The tagName value.
    * @param {string} provider - The resource provider value.
-   * @param {object} config
    */
-  constructor(elts, kind, tagName, provider, config) {
+  constructor(elts, kind, tagName, provider) {
     // Next Id Generator
     this.idGenIt = NODEIDGENFN;
     this.title = 'title';
@@ -48,7 +47,6 @@ export class BaseElt {
     this._finish = null;
 
     this.data = {};
-    this.config(config);
 
     this.edges = [];
 
