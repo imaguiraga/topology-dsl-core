@@ -213,41 +213,41 @@ BaseElt.prototype.sequence = function (...elts) {
 /**
  * Create a terminal dsl tree.
  * @param {object} elt - The element.
- * @param {object} options
+ * @param {object} config
  * @return {object} flow dsl.
  */
-export function terminal(elt, options) {
-  return new TerminalElt(elt, options)._set_(STYLE, BASE_ICONS_MAP.get('resource'));
+export function terminal(elt, config) {
+  return new TerminalElt(elt, config)._set_(STYLE, BASE_ICONS_MAP.get('resource'));
 }
 
 /**
  * Create a service dsl tree.
  * @param {object} elt - The element.
- * @param {object} options
+ * @param {object} config
  * @return {object} service dsl.
  */
-export function element(elt, options) {
-  return terminal(elt, options)._tagName_('element');
+export function element(elt, config) {
+  return terminal(elt, config)._tagName_('element');
 }
 
 /**
  * Create a service dsl tree.
  * @param {object} elt - The element.
- * @param {object} options
+ * @param {object} config
  * @return {object} service dsl.
  */
-export function service(elt, options) {
-  return terminal(elt, options)._tagName_('service');
+export function service(elt, config) {
+  return terminal(elt, config)._tagName_('service');
 }
 
 /**
  * Create a node dsl tree.
  * @param {array|object} elts - The elements.
- * @param {object} options
+ * @param {object} config
  * @return {object} flow dsl.
  */
-export function node(elt, options) {
-  return terminal(elt, options);
+export function node(elt, config) {
+  return terminal(elt, config);
 }
 
 /**
@@ -255,8 +255,8 @@ export function node(elt, options) {
  * @param {array|object} elts - The elements.
  * @return {object} flow dsl.
  */
-export function from(elt, options) {
-  return terminal(elt, options);
+export function from(elt, config) {
+  return terminal(elt, config);
 }
 
 /**

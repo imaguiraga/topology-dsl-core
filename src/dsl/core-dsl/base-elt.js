@@ -22,9 +22,9 @@ export class BaseElt {
    * @param {string} kind - The kind value.
    * @param {string} tagName - The tagName value.
    * @param {string} provider - The resource provider value.
-   * @param {object} options
+   * @param {object} config
    */
-  constructor(elts, kind, tagName, provider, options) {
+  constructor(elts, kind, tagName, provider, config) {
     // Next Id Generator
     this.idGenIt = NODEIDGENFN;
     this.title = 'title';
@@ -40,8 +40,6 @@ export class BaseElt {
     this.provider = provider;
     this.compound = false;
     this.tags = [];
-    // optional
-    this.options = options;
 
     // Layout direction
     this.direction = null;
@@ -50,6 +48,10 @@ export class BaseElt {
     this._finish = null;
 
     this.data = {};
+    this.config(config);
+
+    this.edges = [];
+
     this.name = this.id;
     this.title = this.id;
 
@@ -64,6 +66,25 @@ export class BaseElt {
       this.title = r.toString();
     }
 
+  }
+
+  edge(e) {
+    if (e === undefined || e === null) {
+      this.edges.push(e);
+    }
+    return this;
+  }
+  config(value) {
+    // Merge with current config
+    let cfg = this._get_('config');
+    if (cfg === undefined || cfg === null) {
+      cfg = value;
+    } else {
+      // Merge with current config
+      cfg = { ...cfg, ...value };
+    }
+
+    return this._set_('config', cfg);
   }
 
   _up_() {
@@ -269,7 +290,9 @@ export class BaseElt {
   }
 
   _set_(key, value) {
-    this.data[key] = value;
+    if (value !== undefined && value !== null) {
+      this.data[key] = value;
+    }
     return this;
   }
 
