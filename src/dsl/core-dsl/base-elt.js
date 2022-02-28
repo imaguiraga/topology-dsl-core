@@ -66,21 +66,25 @@ export class BaseElt {
 
   }
 
-  edge(...e) {
+  // from/to ports i.e l(eft),r(ight),t(op),b(ottom)
+  edge(from, to, ...e) {
     if (e === undefined || e === null) {
+      let tmparray = [];
       if (Array.isArray(e)) {
-        e.reduce((acc, val) => acc.concat(val), []).forEach((v) => {
-          this.edges.push(v);
-        }, this);
+        tmparray = e.reduce((acc, val) => acc.concat(val), []);
 
       } else {
-        this.edges.push(...e);
+        tmparray = [...e];
+        //this.edges.push(...e);
       }
+      tmparray.forEach((node) => {
+        this.edges.push({ from, to, node });
+      }, this);
 
     }
     return this;
   }
-  
+
   config(value) {
     // Merge with current config
     let cfg = this._get_('config');
