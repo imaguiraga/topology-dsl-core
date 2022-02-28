@@ -66,12 +66,21 @@ export class BaseElt {
 
   }
 
-  edge(e) {
+  edge(...e) {
     if (e === undefined || e === null) {
-      this.edges.push(e);
+      if (Array.isArray(e)) {
+        e.reduce((acc, val) => acc.concat(val), []).forEach((v) => {
+          this.edges.push(v);
+        }, this);
+
+      } else {
+        this.edges.push(...e);
+      }
+
     }
     return this;
   }
+  
   config(value) {
     // Merge with current config
     let cfg = this._get_('config');
