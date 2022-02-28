@@ -66,8 +66,8 @@ export class BaseElt {
 
   }
 
-  // from/to ports i.e l(eft),r(ight),t(op),b(ottom)
-  edge(from, to, ...e) {
+  // dir direction from/to ports i.e l(eft),r(ight),t(op),b(ottom) lb, tb,lr,ll
+  edge(dir, ...e) {
     if (e === undefined || e === null) {
       let tmparray = [];
       if (Array.isArray(e)) {
@@ -78,7 +78,7 @@ export class BaseElt {
         //this.edges.push(...e);
       }
       tmparray.forEach((node) => {
-        this.edges.push({ from, to, node });
+        this.edges.push({ dir: dir.toLowerCase(), node });
       }, this);
 
     }
