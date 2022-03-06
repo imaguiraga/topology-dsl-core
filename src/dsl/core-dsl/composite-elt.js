@@ -6,6 +6,23 @@ import {
 export const WORKFLOW_KIND = 'workflow';
 export const WORKFLOW_PROVIDER = 'default';
 
+
+const TERMINAL = 'terminal';
+/**
+ * Class TerminalElt.
+ */
+export class TerminalElt extends BaseElt {
+
+  /**
+   * Create a TerminalElt.
+   * @param {object} elt - The elt value.
+   */
+  constructor(elt) {
+    super(elt, TERMINAL, TERMINAL, WORKFLOW_PROVIDER);
+  }
+
+}
+
 const GROUP = 'group';
 /**
  * Class GroupElt.
@@ -18,6 +35,21 @@ export class GroupElt extends CompositeElt {
    */
   constructor(elts) {
     super(elts, GROUP, GROUP, WORKFLOW_PROVIDER);
+  }
+
+}
+const SEQUENCE = 'sequence';
+/**
+ * Class SequenceElt.
+ * @extends CompositeElt
+ */
+export class SequenceElt extends CompositeElt {
+  /**
+   * Create a SequenceElt.
+   * @param {object} elts - The elts value.
+   */
+  constructor(elts) {
+    super(elts, SEQUENCE, SEQUENCE, WORKFLOW_PROVIDER);
   }
 
 }
@@ -70,35 +102,4 @@ export class RepeatElt extends CompositeElt {
   }
 }
 
-const SEQUENCE = 'sequence';
-/**
- * Class SequenceElt.
- * @extends CompositeElt
- */
-export class SequenceElt extends CompositeElt {
-  /**
-   * Create a SequenceElt.
-   * @param {object} elts - The elts value.
-   */
-  constructor(elts) {
-    super(elts, SEQUENCE, SEQUENCE, WORKFLOW_PROVIDER);
-  }
-
-}
-
-const TERMINAL = 'terminal';
-/**
- * Class TerminalElt.
- */
-export class TerminalElt extends BaseElt {
-
-  /**
-   * Create a TerminalElt.
-   * @param {object} elt - The elt value.
-   */
-  constructor(elt) {
-    super(elt, TERMINAL, TERMINAL, WORKFLOW_PROVIDER);
-  }
-
-}
 

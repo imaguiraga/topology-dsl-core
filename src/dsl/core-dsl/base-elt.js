@@ -28,9 +28,9 @@ export class BaseElt {
     this.idGenIt = NODEIDGENFN;
     this.title = 'title';
 
-    // Add start finish nodes
-    this.nostart = false;
-    this.noend = false;
+    // Exclude synthetic start finish nodes by default
+    this.nostart = true;
+    this.noend = true;
 
     //get new id
     this.kind = kind || 'resource';
